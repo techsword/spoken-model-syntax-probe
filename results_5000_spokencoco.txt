@@ -1,0 +1,54 @@
+With audio length
+
+the accuracy of the SVC classifier using the embeddings from layer 0 is 0.2592
+the accuracy of the logreg classifier using the embeddings from layer 0 is 0.2472
+the accuracy of the SVC classifier using the embeddings from layer 1 is 0.2448
+the accuracy of the logreg classifier using the embeddings from layer 1 is 0.2424
+the accuracy of the SVC classifier using the embeddings from layer 2 is 0.2472
+the accuracy of the logreg classifier using the embeddings from layer 2 is 0.2504
+the accuracy of the SVC classifier using the embeddings from layer 3 is 0.2536
+the accuracy of the logreg classifier using the embeddings from layer 3 is 0.26
+the accuracy of the SVC classifier using the embeddings from layer 4 is 0.264
+the accuracy of the logreg classifier using the embeddings from layer 4 is 0.2624
+the accuracy of the SVC classifier using the embeddings from layer 5 is 0.2704
+the accuracy of the logreg classifier using the embeddings from layer 5 is 0.2792
+the accuracy of the SVC classifier using the embeddings from layer 6 is 0.2752
+the accuracy of the logreg classifier using the embeddings from layer 6 is 0.2736
+the accuracy of the SVC classifier using the embeddings from layer 7 is 0.2872
+the accuracy of the logreg classifier using the embeddings from layer 7 is 0.2864
+the accuracy of the SVC classifier using the embeddings from layer 8 is 0.2752
+the accuracy of the logreg classifier using the embeddings from layer 8 is 0.2784
+the accuracy of the SVC classifier using the embeddings from layer 9 is 0.2536
+the accuracy of the logreg classifier using the embeddings from layer 9 is 0.2568
+the accuracy of the SVC classifier using the embeddings from layer 10 is 0.2432
+the accuracy of the logreg classifier using the embeddings from layer 10 is 0.2464
+the accuracy of the SVC classifier using the embeddings from layer 11 is 0.2344
+the accuracy of the logreg classifier using the embeddings from layer 11 is 0.224
+
+
+Without audio length
+
+the accuracy of the SVC classifier using the embeddings from layer 0 is 0.248
+the accuracy of the logreg classifier using the embeddings from layer 0 is 0.248
+the accuracy of the SVC classifier using the embeddings from layer 1 is 0.2488
+the accuracy of the logreg classifier using the embeddings from layer 1 is 0.2408
+the accuracy of the SVC classifier using the embeddings from layer 2 is 0.256
+the accuracy of the logreg classifier using the embeddings from layer 2 is 0.2512
+the accuracy of the SVC classifier using the embeddings from layer 3 is 0.2608
+the accuracy of the logreg classifier using the embeddings from layer 3 is 0.2568
+the accuracy of the SVC classifier using the embeddings from layer 4 is 0.268
+the accuracy of the logreg classifier using the embeddings from layer 4 is 0.256
+the accuracy of the SVC classifier using the embeddings from layer 5 is 0.2664
+the accuracy of the logreg classifier using the embeddings from layer 5 is 0.2704
+the accuracy of the SVC classifier using the embeddings from layer 6 is 0.2664
+the accuracy of the logreg classifier using the embeddings from layer 6 is 0.2696
+the accuracy of the SVC classifier using the embeddings from layer 7 is 0.2824
+the accuracy of the logreg classifier using the embeddings from layer 7 is 0.2904
+the accuracy of the SVC classifier using the embeddings from layer 8 is 0.2752
+the accuracy of the logreg classifier using the embeddings from layer 8 is 0.2768
+the accuracy of the SVC classifier using the embeddings from layer 9 is 0.2544
+the accuracy of the logreg classifier using the embeddings from layer 9 is 0.2608
+the accuracy of the SVC classifier using the embeddings from layer 10 is 0.2552
+the accuracy of the logreg classifier using the embeddings from layer 10 is 0.2512
+the accuracy of the SVC classifier using the embeddings from layer 11 is 0.2384
+the accuracy of the logreg classifier using the embeddings from layer 11 is 0.2376
