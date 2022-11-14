@@ -12,22 +12,25 @@ import json
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-model_file = 'wav2vec_small.pt'
+
 sr = 16000
 
 import stanza
 nlp = stanza.Pipeline(lang='en', processors='tokenize,pos,constituency')
 
-from torchaudio.models.wav2vec2.utils import import_fairseq_model
-model, _, _ = fairseq.checkpoint_utils.load_model_ensemble_and_task([model_file])
-original = model[0]
-imported = import_fairseq_model(original)
+def loading_fairseq_model(model_file):
+    from torchaudio.models.wav2vec2.utils import import_fairseq_model
+    model, _, _ = fairseq.checkpoint_utils.load_model_ensemble_and_task([model_file])
+    original = model[0]
+    imported = import_fairseq_model(original)
+    return imported
 
-def generating_features(dataset):
+def generating_features(dataset, model_file):
     feat_list = []
     lab_list = []
     annot_list = []
     wav_list = []
+    model = loading_fairseq_model(model_file=model_file)
     for waveform, annot in dataset:
         doc = nlp(annot)
         for sent in doc.sentences:
@@ -38,7 +41,7 @@ def generating_features(dataset):
                 annot_list.append(annot)
                 wav_list.append(waveform)
                 with torch.inference_mode():
-                    features, _ = imported.to(device).extract_features(waveform.to(device))
+                    features, _ = model.to(device).extract_features(waveform.to(device))
                     # print(features)
                     audio_len = len(waveform[-1])/sr
                     features = [torch.mean(x.cpu(),dim=1).squeeze().numpy() for x in features]

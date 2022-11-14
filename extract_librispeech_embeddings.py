@@ -69,7 +69,6 @@ def making_libri_csv(librispeech_root,libri_split):
         audio_list += temp_audio_list
 
     df = pd.DataFrame(audio_list)
-    # df['fullpath'] = df[0]
     df['dirname'] = df[0].apply(lambda x : os.path.split(x)[0])
     df['fileid'] = df[0].apply(lambda x : os.path.split(x)[1])
     df['fileid'] = df['fileid'].str.replace('.flac', '')
@@ -92,7 +91,7 @@ def making_libri_csv(librispeech_root,libri_split):
     df_txt['sent'] = df_txt[0].str.replace(r'(\d+-\d+-\d+\s)', '')
     df_txt = df_txt.drop([0], axis=1)
 
-    merge_df = pd.merge(df,df_txt, on ='fileid')
+    merge_df = pd.merge(df,df_txt, on = 'fileid')
     merge_df.to_csv('librispeech_'+libri_split+'.csv', index=False)
 
 
