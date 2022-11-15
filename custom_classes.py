@@ -9,6 +9,8 @@ import os
 import pickle
 import re
 import json
+import stanza
+nlp = stanza.Pipeline(lang='en', processors='tokenize,pos,constituency')
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -37,14 +39,19 @@ class SpokenCOCODataset(Dataset):
         audio_name = os.path.join(self.root_dir,
                                 self.audiofilelist.iloc[idx, 0])
         audio, sr = torchaudio.load(audio_name)
-        sent = self.audiofilelist.iloc[idx,-1]
+        annot = self.audiofilelist.iloc[idx,-1]
         # sample = {'audio': audio.to(device), 'file': audio_name, 'sr': sr, 'annot': sent}
         sample = audio.to(device)
+
+        doc = nlp(annot)
+        for sent in doc.sentences:
+            depth = sent.constituency.depth()
+        
 
         if self.transform:
             sample = self.transform(sample)
 
-        return sample, sent
+        return sample, annot, depth, audio_name
 
     def collate(self, batch):
         return batch
@@ -80,7 +87,7 @@ class LibriDataset(Dataset):
         if self.transform:
             sample = self.transform(sample)
 
-        return sample, sent
+        return sample, sent, audio_name
 
     def collate(self, batch):
         return batch
