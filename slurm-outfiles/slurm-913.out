@@ -1,0 +1,132 @@
+start loading embedding for model
+start training logreg model for layer 0 with all data
+running logreg on layer 0
+logreg on just audio
+logreg on audio + audiolen
+logreg on everything
+logreg on audio + wo    rdcount
+[[0, (-0.27367521878646706, 2.789971949509116, 0.2791023842917251), 'embedding'], [0, (-0.2663120090259823, 2.7738429172510517, 0.2803295932678822), 'audiolen'], [0, (-0.07510865991948035, 2.355014025245442, 0.30539971949509115), 'everything'], [0, (-0.08015085790763843, 2.3660589060308554, 0.3059256661991585), 'wordcount']]
+total runtime for logreg is 2335.8535656929016
+loading data takes 23.468558073043823
+All done
+start loading embedding for model
+start training logreg model for layer 10 with all data
+running logreg on layer 10
+logreg on just audio
+logreg on audio + audiolen
+logreg on everything
+logreg on audio + wo    rdcount
+[[10, (-0.27047382323843006, 2.7829593267882187, 0.288218793828892), 'embedding'], [10, (-0.2628705088118426, 2.766304347826087, 0.2906732117812062), 'audiolen'], [10, (-0.04221432066340158, 2.2829593267882187, 0.31539270687237025), 'everything'], [10, (-0.04613603020974666, 2.2915497896213184, 0.31661991584852733), 'wordcount']]
+total runtime for logreg is 2630.873921394348
+loading data takes 22.120505332946777
+All done
+start loading embedding for model
+start training logreg model for layer 11 with all data
+running logreg on layer 11
+logreg on just audio
+logreg on audio + audiolen
+logreg on everything
+logreg on audio + wo    rdcount
+[[11, (-0.2653515903615711, 2.7717391304347827, 0.2873422159887798), 'embedding'], [11, (-0.27951776566163433, 2.8027699859747544, 0.28839410939691446), 'audiolen'], [11, (-0.046616239541952265, 2.292601683029453, 0.31100981767180924), 'everything'], [11, (-0.05477979818944623, 2.310483870967742, 0.3120617110799439), 'wordcount']]
+total runtime for logreg is 1328.1569006443024
+loading data takes 23.66922378540039
+All done
+start loading embedding for model
+start training logreg model for layer 1 with all data
+running logreg on layer 1
+logreg on just audio
+logreg on audio + audiolen
+logreg on everything
+logreg on audio + wo    rdcount
+[[1, (-0.21845114558283107, 2.6690042075736327, 0.2915497896213184), 'embedding'], [1, (-0.22741505311733423, 2.688639551192146, 0.2929523141654979), 'audiolen'], [1, (-0.04893725131427895, 2.297685834502104, 0.31539270687237025), 'everything'], [1, (-0.05269889108322223, 2.3059256661991583, 0.31539270687237025), 'wordcount']]
+total runtime for logreg is 2603.9925408363342
+loading data takes 23.930689811706543
+All done
+start loading embedding for model
+start training logreg model for layer 2 with all data
+running logreg on layer 2
+logreg on just audio
+logreg on audio + audiolen
+logreg on everything
+logreg on audio + wo    rdcount
+[[2, (-0.20244416784264674, 2.6339410939691446, 0.28927068723702665), 'embedding'], [2, (-0.20868688916131872, 2.647615708274895, 0.2862903225806452), 'audiolen'], [2, (-0.020524865825451766, 2.2354488078541372, 0.31960028050490885), 'everything'], [2, (-0.019244307606237188, 2.2326437587657786, 0.32047685834502104), 'wordcount']]
+total runtime for logreg is 3091.907580137253
+loading data takes 25.120999813079834
+All done
+start loading embedding for model
+start training logreg model for layer 3 with all data
+running logreg on layer 3
+logreg on just audio
+logreg on audio + audiolen
+logreg on everything
+logreg on audio + wo    rdcount
+[[3, (-0.15026142040964574, 2.5196353436185133, 0.3120617110799439), 'embedding'], [3, (-0.1380961173271058, 2.4929873772791025, 0.31451612903225806), 'audiolen'], [3, (-0.012041167623154214, 2.216865357643759, 0.32433380084151475), 'everything'], [3, (-0.010200365183032911, 2.2128330995792425, 0.32556100981767183), 'wordcount']]
+total runtime for logreg is 2466.2924032211304
+loading data takes 88.54134750366211
+All done
+start loading embedding for model
+start training logreg model for layer 4 with all data
+running logreg on layer 4
+logreg on just audio
+logreg on audio + audiolen
+logreg on everything
+logreg on audio + wo    rdcount
+[[4, (-0.04013341355717759, 2.2784011220196354, 0.33011921458625526), 'embedding'], [4, (-0.03565145978992601, 2.2685834502103788, 0.3288920056100982), 'audiolen'], [4, (0.07551700061565414, 2.025070126227209, 0.34309256661991583), 'everything'], [4, (0.07367619817553295, 2.029102384291725, 0.34081346423562414), 'wordcount']]
+total runtime for logreg is 2473.782034635544
+loading data takes 22.701116800308228
+All done
+start loading embedding for model
+start training logreg model for layer 5 with all data
+running logreg on layer 5
+logreg on just audio
+logreg on audio + audiolen
+logreg on everything
+logreg on audio + wo    rdcount
+[[5, (0.040061544921145886, 2.10273492286115, 0.3436185133239832), 'embedding'], [5, (0.060310371762479, 2.0583800841514726, 0.3446704067321178), 'audiolen'], [5, (0.14418693512104486, 1.8746493688639552, 0.3592215988779804), 'everything'], [5, (0.14418693512104486, 1.8746493688639552, 0.36097475455820477), 'wordcount']]
+total runtime for logreg is 2340.7719206809998
+loading data takes 22.86225199699402
+All done
+start loading embedding for model
+start training logreg model for layer 6 with all data
+running logreg on layer 6
+logreg on just audio
+logreg on audio + audiolen
+logreg on everything
+logreg on audio + wo    rdcount
+[[6, (0.1070507467638172, 1.9559957924263676, 0.3592215988779804), 'embedding'], [6, (0.12009643362206746, 1.9274193548387097, 0.36202664796633943), 'audiolen'], [6, (0.2090952298574923, 1.732468443197756, 0.3697405329593268), 'everything'], [6, (0.2062940087529601, 1.7386044880785414, 0.3697405329593268), 'wordcount']]
+total runtime for logreg is 2406.7947854995728
+loading data takes 22.775519132614136
+All done
+start loading embedding for model
+start training logreg model for layer 7 with all data
+running logreg on layer 7
+logreg on just audio
+logreg on audio + audiolen
+logreg on everything
+logreg on audio + wo    rdcount
+[[7, (0.15139007510412783, 1.8588709677419355, 0.37710378681626927), 'embedding'], [7, (0.16203471530135038, 1.8355539971949508, 0.3741234221598878), 'audiolen'], [7, (0.2338260104660771, 1.6782959326788218, 0.3823632538569425), 'everything'], [7, (0.2338260104660771, 1.6782959326788218, 0.38166199158485276), 'wordcount']]
+total runtime for logreg is 2644.8477532863617
+loading data takes 23.17307162284851
+All done
+start loading embedding for model
+start training logreg model for layer 8 with all data
+running logreg on layer 8
+logreg on just audio
+logreg on audio + audiolen
+logreg on everything
+logreg on audio + wo    rdcount
+[[8, (0.07799808216538273, 2.0196353436185133, 0.35729312762973353), 'embedding'], [8, (0.08240000104393341, 2.009992987377279, 0.3576437587657784), 'audiolen'], [8, (0.15419129620866012, 1.85273492286115, 0.366234221598878), 'everything'], [8, (0.15427133109736102, 1.8525596072931276, 0.36640953716690045), 'wordcount']]
+total runtime for logreg is 2787.573172569275
+loading data takes 22.676339864730835
+All done
+start loading embedding for model
+start training logreg model for layer 9 with all data
+running logreg on layer 9
+logreg on just audio
+logreg on audio + audiolen
+logreg on everything
+logreg on audio + wo    rdcount
+[[9, (-0.14393866420227308, 2.5057854137447406, 0.3190743338008415), 'embedding'], [9, (-0.13361416355985423, 2.483169705469846, 0.3178471248246844), 'audiolen'], [9, (0.03141777694144632, 2.1216690042075736, 0.33485273492286116), 'everything'], [9, (0.02717592784029743, 2.130960729312763, 0.3350280504908836), 'wordcount']]
+total runtime for logreg is 3126.7342019081116
+loading data takes 22.531277418136597
+All done
