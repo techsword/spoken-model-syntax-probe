@@ -5,6 +5,7 @@
 #SBATCH --time=4:00:00     # walltime
 #SBATCH --array=0-11%4
 #SBATCH --gres=gpu
+#SBATCH -p GPU
 
 source /usr/local/anaconda3/etc/profile.d/conda.sh
 
@@ -18,7 +19,7 @@ conda activate sklearn-env
 # while [ $counter -le 11 ]
 # do
     # echo $counter
-srun python -u classifier.py --layer $SLURM_ARRAY_TASK_ID
+srun python -u classifier.py --layer $SLURM_ARRAY_TASK_ID --model True
     # ((counter++))
 # done
 

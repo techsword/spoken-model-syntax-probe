@@ -26,7 +26,7 @@ libri_train_clean = 'train-clean-100-extracted.pt'
 
 num_data = 10000
 
-def logreg_training(X,y):
+def model_training(X,y):
         X_train, X_test, y_train, y_test = train_test_split(X, y, random_state = 42)
 
         # svm_model_linear = SVC(kernel = 'linear', C = 1,max_iter=10000).fit(X_train, y_train)
@@ -72,19 +72,19 @@ def iter_layers(embeddings, labels, lay):
     print(f"logreg on just audio")
     # X = [np.delete(x[lay], [-2,-1]) for x in embeddings]
     X = [np.delete(x, [-2,-1]) for x in embeddings]
-    scoring.append([lay, logreg_training(X, y), 'embedding'])
+    scoring.append([lay, model_training(X, y), 'embedding'])
     # audio + audiolen
     print(f"logreg on audio + audiolen")
     X = [np.delete(x, -1) for x in embeddings]
-    scoring.append([lay, logreg_training(X, y), 'audiolen'])
+    scoring.append([lay, model_training(X, y), 'audiolen'])
     # everything
     print(f"logreg on everything")
     X = [x for x in embeddings]
-    scoring.append([lay, logreg_training(X, y), 'everything'])
+    scoring.append([lay, model_training(X, y), 'everything'])
     # audio+wordcount
     print(f"logreg on audio + wo    rdcount")
     X = [np.delete(x, -2) for x in embeddings]
-    scoring.append([lay, logreg_training(X, y), 'wordcount'])
+    scoring.append([lay, model_training(X, y), 'wordcount'])
     print(scoring)
         
 
@@ -102,23 +102,29 @@ if __name__ == "__main__":
     parser.add_argument('--baseline', 
                     type=bool, default = False, metavar='baseline',
                     help='decide on if you want to measure the baseline ')
+    parser.add_argument('--model', 
+                    type=bool, default = False, metavar='model',
+                    help='actually training the model, default = False')
 
 
     args = parser.parse_args()
-    time1 = time.time()
+    # time1 = time.time()
     print(f"start loading embedding for model")
-    dataset = os.path.join(work_path,spokencoco_extracted)
+    # dataset = os.path.join(work_path,spokencoco_extracted)
+    dataset = '/home/gshen/work_dir/spoken-model-syntax-probe/spokencoco_extracted_hubert_.pt'
     embeddings, labels, annot, wav = zip(*torch.load(dataset))
 
     embeddings = [x[args.layer] for x in embeddings][:args.num_data]
     labels = labels[:args.num_data]
     # print(args)
-    time2 = time.time()
+    # time2 = time.time()
     # print(f"start training logreg model for layer {args.layer} with {'all' if args.num_data == None else args.num_data} data")
-    # iter_layers(embeddings=embeddings, labels = labels, lay = args.layer)
+    
     if args.baseline == True:
         baseline(embeddings,labels)
-    time3 = time.time()
-    print(f"total runtime for logreg is {time3-time2}")
-    print(f"loading data takes {time2-time1}")
+    elif args.model == True:
+        iter_layers(embeddings=embeddings, labels = labels, lay = args.layer)
+    # time3 = time.time()
+    # print(f"total runtime for logreg is {time3-time2}")
+    # print(f"loading data takes {time2-time1}")
 
