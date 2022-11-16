@@ -28,6 +28,7 @@ original = model[0]
 imported = import_fairseq_model(original)
 
 from custom_classes import LibriDataset
+from custom_functions import walk_librispeech_dirs
 
 
 def generating_features(dataset):
@@ -50,7 +51,7 @@ def generating_features(dataset):
 
     return feat_list, lab_list
 
-def making_libri_csv(librispeech_root,libri_split):
+# def making_libri_csv(librispeech_root,libri_split):
     libri_split_path = os.path.join(librispeech_root,libri_split)
     libri_sub1 = []
     for i in os.listdir(libri_split_path):
@@ -96,6 +97,8 @@ def making_libri_csv(librispeech_root,libri_split):
 
 
 if __name__ == "__main__":
+    df = walk_librispeech_dirs(librispeech_root=librispeech_root, libri_split=libri_split)
+    df.to_csv('librispeech_'+libri_split+'.csv', index=False)
     print(f"generating features")
     libri_ds = LibriDataset('librispeech_'+libri_split+'.csv', '/home/gshen/work_dir/')
     embeddings, labels = generating_features(libri_ds)
