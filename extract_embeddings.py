@@ -9,12 +9,13 @@ import os
 import pickle
 import re
 import json
+import argparse
 
 
 from custom_classes import Corpus
 from custom_functions import walk_librispeech_dirs, read_json_save_csv, generating_features
 
-model_file = '/home/gshen/work_dir/spoken-model-syntax-probe/hubert_base_ls960.pt' #'/home/gshen/work_dir/wav2vec_small.pt' # 'hubert_base_ls960.pt' or 'wav2vec_small.pt'
+# model_file = '/home/gshen/work_dir/spoken-model-syntax-probe/hubert_base_ls960.pt' #'/home/gshen/work_dir/wav2vec_small.pt' # 'hubert_base_ls960.pt' or 'wav2vec_small.pt'
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 sr = 16000
@@ -31,30 +32,49 @@ saved_file = libri_split+'-extracted.pt'
 
 json_path = '/home/gshen/SpokenCOCO/SpokenCOCO_val.json'
 root_dir='/home/gshen/SpokenCOCO/'
-saved_file = os.path.basename(model_file[:-3]) + '_spokencoco_extracted' + '.pt'
+
 csv_file = 'spokencoco_val.csv'
 
 
 
 if __name__ == "__main__":
-    if os.path.isfile(csv_file) == False:
-        print(f"{csv_file} not found, creating from {json_path}")
-        spokencoco_df = read_json_save_csv(json_path)
-        spokencoco_df.to_csv(csv_file, header=None, index = None)
-    elif os.path.isfile('librispeech_'+libri_split+'.csv') == False:
-        librispeech_dataset_df = walk_librispeech_dirs(librispeech_root=librispeech_root, libri_split=libri_split)
-        librispeech_dataset_df.to_csv('librispeech_'+libri_split+'.csv', index=False)
+    parser = argparse.ArgumentParser(description='controlling number of data and layer used in model training')
 
-    print(f"generating features")
-    libri_ds = Corpus('librispeech_'+libri_split+'.csv', '/home/gshen/work_dir/')
-    libri_extracted = generating_features(libri_ds)
-    print(f'zipping stuff together')
-    print(f"saving the extracted embeddings to {saved_file}")
-    torch.save(libri_extracted, saved_file)
+    parser.add_argument('--model',
+                    type=str, default = 'hubert', metavar='model',
+                    help="choose the model used to extract embeddings, default is hubert. options: hubert, wav2vec"
+    )
+    parser.add_argument('--corpus',
+                    type=str, default = 'spokencoco', metavar='corpus',
+                    help="choose the corpus to extract embeddings from, default is spokencoco. options: spokencoco, librispeech"
+    )
+    args = parser.parse_args()
+
+    model_dict = {'hubert': '/home/gshen/work_dir/spoken-model-syntax-probe/hubert_base_ls960.pt', 'wav2vec':'/home/gshen/work_dir/wav2vec_small.pt'}
+    model_file = model_dict[args.model]
+    saved_file = os.path.basename(model_file[:-3]) + '_' + args.corpus + '_extracted' + '.pt'
+    if args.corpus == 'spokencoco':
+
+        if os.path.isfile(csv_file) == False:
+            print(f"{csv_file} not found, creating from {json_path}")
+            spokencoco_df = read_json_save_csv(json_path)
+            spokencoco_df.to_csv(csv_file, header=None, index = None)
+        print(f"generating features")
+        spokencoco = Corpus(csv_file, root_dir = root_dir)
+        spokencoco_extracted = generating_features(spokencoco, model_file)
+        print(f"saving the extracted embeddings to {saved_file}")
+        torch.save(spokencoco_extracted, saved_file)
+
+    elif args.corpus == "librispeech":
+        if os.path.isfile('librispeech_'+libri_split+'.csv') == False:
+            print(f"{'librispeech_'+libri_split+'.csv'} not found, creating from {os.path.join(librispeech_root, libri_split)}")
+            librispeech_dataset_df = walk_librispeech_dirs(librispeech_root=librispeech_root, libri_split=libri_split)
+            librispeech_dataset_df.to_csv('librispeech_'+libri_split+'.csv', index=False)
+        print(f"generating features")
+        libri_ds = Corpus('librispeech_'+libri_split+'.csv', os.path.join(librispeech_root, libri_split))
+        libri_extracted = generating_features(libri_ds, model_file)
+        print(f"saving the extracted embeddings to {saved_file}")
+        torch.save(libri_extracted, saved_file)
 
 
-    print(f"generating features")
-    spokencoco = Corpus(csv_file, root_dir = root_dir)
-    spokencoco_extracted = generating_features(spokencoco, model_file)
-    print(f"saving the extracted embeddings to {saved_file}")
-    torch.save(spokencoco_extracted, saved_file)
+    

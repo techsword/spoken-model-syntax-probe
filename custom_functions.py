@@ -31,7 +31,7 @@ def walk_librispeech_dirs(librispeech_root, libri_split):
     import itertools
     flatlist = list(itertools.chain(*filelist))
     txtlist = [os.path.join(*[re.split(r'\.|-', x)[0],re.split(r'\.|-', x)[1],x]) for x in flatlist if 'txt' in x]
-    flaclist = [os.path.join(*[libri_split,re.split(r'\.|-', x)[0],re.split(r'\.|-', x)[1],x]) for x in flatlist if 'flac' in x]
+    flaclist = [os.path.join(*[re.split(r'\.|-', x)[0],re.split(r'\.|-', x)[1],x]) for x in flatlist if 'flac' in x]
     df = pd.DataFrame(flaclist)
     # df['dirname'] = df[0].apply(lambda x : os.path.split(x)[0])
     df['fileid'] = df[0].apply(lambda x : os.path.split(x)[1])
