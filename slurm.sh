@@ -24,3 +24,5 @@ srun python -u model_run.py --layer $SLURM_ARRAY_TASK_ID  --model True #--num_da
 # done
 
 # echo All done
+
+# Run 'srun python model_run.py --baseline True' to get baseline
