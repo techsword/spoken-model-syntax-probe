@@ -54,6 +54,16 @@ class Corpus(Dataset):
 
     def collate(self, batch):
         return batch
+    
+    def get_depth(self,idx):
+        if torch.is_tensor(idx):
+            idx = idx.tolist()
+        annot = self.audiofilelist.iloc[idx,-1]
+        doc = nlp(annot)
+        for sent in doc.sentences:
+            depth = sent.constituency.depth()
+        return annot, depth
+
 
 class SpokenCOCODataset(Dataset):
 

@@ -19,7 +19,7 @@ conda activate sklearn-env
 # while [ $counter -le 11 ]
 # do
     # echo $counter
-srun python -u model_run.py --layer $SLURM_ARRAY_TASK_ID  --model True #--num_data 10000
+srun python -u model_run.py --layer $SLURM_ARRAY_TASK_ID  --model True --dataset libri-wav2vec #--num_data 10000
     # ((counter++))
 # done
 

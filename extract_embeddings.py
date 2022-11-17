@@ -50,12 +50,16 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    # setting the model to extract embeddings and the output filename
     model_dict = {'hubert': '/home/gshen/work_dir/spoken-model-syntax-probe/hubert_base_ls960.pt', 'wav2vec':'/home/gshen/work_dir/wav2vec_small.pt'}
     model_file = model_dict[args.model]
     saved_file = os.path.basename(model_file[:-3]) + '_' + args.corpus + '_extracted' + '.pt'
-    if args.corpus == 'spokencoco':
 
+
+    if args.corpus == 'spokencoco':
+        # extract embeddings with the model defined above from spokencoco corpus
         if os.path.isfile(csv_file) == False:
+            # making sure the csv file is there, otherwise create the csv file
             print(f"{csv_file} not found, creating from {json_path}")
             spokencoco_df = read_json_save_csv(json_path)
             spokencoco_df.to_csv(csv_file, header=None, index = None)
@@ -66,7 +70,9 @@ if __name__ == "__main__":
         torch.save(spokencoco_extracted, saved_file)
 
     elif args.corpus == "librispeech":
+        # extract embeddings with the model defined above from librispeech corpus
         if os.path.isfile('librispeech_'+libri_split+'.csv') == False:
+            # making sure the csv file is there, otherwise create the csv file
             print(f"{'librispeech_'+libri_split+'.csv'} not found, creating from {os.path.join(librispeech_root, libri_split)}")
             librispeech_dataset_df = walk_librispeech_dirs(librispeech_root=librispeech_root, libri_split=libri_split)
             librispeech_dataset_df.to_csv('librispeech_'+libri_split+'.csv', index=False)

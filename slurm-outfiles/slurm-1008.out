@@ -1,0 +1,36 @@
+start loading embedding for model
+running model on layer 0
+[[0, 0.39014576648594523, 'embedding'], [0, 0.39604108212738975, 'audiolen'], [0, 0.4341098955104188, 'everything'], [0, 0.4265770421599786, 'wordcount']]
+start loading embedding for model
+running model on layer 10
+[[10, 0.5043493728861976, 'embedding'], [10, 0.5043604168835872, 'audiolen'], [10, 0.49220633984166895, 'everything'], [10, 0.5060213486911114, 'wordcount']]
+start loading embedding for model
+running model on layer 11
+[[11, 0.4978507107296951, 'embedding'], [11, 0.4984994695533319, 'audiolen'], [11, 0.4904121295651288, 'everything'], [11, 0.4884185962146652, 'wordcount']]
+start loading embedding for model
+running model on layer 1
+[[1, 0.3981112788132305, 'embedding'], [1, 0.39988946777324075, 'audiolen'], [1, 0.43769834026321053, 'everything'], [1, 0.4305786278200342, 'wordcount']]
+start loading embedding for model
+running model on layer 2
+[[2, 0.40613251567467645, 'embedding'], [2, 0.406881513699491, 'audiolen'], [2, 0.4407814920361579, 'everything'], [2, 0.4336549326595287, 'wordcount']]
+start loading embedding for model
+running model on layer 3
+[[3, 0.41713892938844443, 'embedding'], [3, 0.41734321447957645, 'audiolen'], [3, 0.4478739469047881, 'everything'], [3, 0.4382169606252596, 'wordcount']]
+start loading embedding for model
+running model on layer 4
+[[4, 0.43823872751727044, 'embedding'], [4, 0.4382155420711087, 'audiolen'], [4, 0.4581352901608645, 'everything'], [4, 0.44976915158218855, 'wordcount']]
+start loading embedding for model
+running model on layer 5
+[[5, 0.48017673664833604, 'embedding'], [5, 0.4802576717879521, 'audiolen'], [5, 0.47523716203024646, 'everything'], [5, 0.47115634988903476, 'wordcount']]
+start loading embedding for model
+running model on layer 6
+[[6, 0.48810625818206, 'embedding'], [6, 0.4878913041422095, 'audiolen'], [6, 0.48823549606530825, 'everything'], [6, 0.4894505611625788, 'wordcount']]
+start loading embedding for model
+running model on layer 7
+[[7, 0.5178376411651608, 'embedding'], [7, 0.5176802877945876, 'audiolen'], [7, 0.516114890896751, 'everything'], [7, 0.5167782796417109, 'wordcount']]
+start loading embedding for model
+running model on layer 8
+[[8, 0.5265586994039166, 'embedding'], [8, 0.5265061372823541, 'audiolen'], [8, 0.52418183165279, 'everything'], [8, 0.5251562429910641, 'wordcount']]
+start loading embedding for model
+running model on layer 9
+[[9, 0.5391271536948841, 'embedding'], [9, 0.5395558817559554, 'audiolen'], [9, 0.5222328749625911, 'everything'], [9, 0.5388000091654881, 'wordcount']]
