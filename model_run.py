@@ -21,7 +21,7 @@ from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
 
 def load_model(model_name):
     if model_name == 'logreg':
-        model = LogisticRegression(solver = 'saga',multi_class='auto', max_iter=10000) # LogisticRegression(solver = 'lbfgs',multi_class='auto', max_iter=10000, n_jobs = 6)
+        model = LogisticRegression(solver = 'saga',multi_class='auto', max_iter=10000)
     elif model_name == 'ridge':
         model = RidgeCV()
     elif model_name == "svm":
@@ -43,7 +43,11 @@ def model_training(X,y, mode, model):
             acc = accuracy_score(y_test,y_pred)
             return r2score, mse, acc
         elif str(type(model)) == "<class 'sklearn.linear_model._ridge.RidgeCV'>":
-            return model.score(X_test, y_test)
+            model_alpha = model.alpha_
+            r2score = model.score(X_test, y_test)
+            y_pred = model.predict(X_test)
+            mse = mean_squared_error(y_test,y_pred)
+            return r2score, mse, model_alpha
 
 def baseline(embeddings, labels, model):
     print(f'measuring baseline')
@@ -52,9 +56,10 @@ def baseline(embeddings, labels, model):
     y = np.array(labels)
     scoring = []
     for i, X in enumerate([wordcount_, audio_len_]):
-        lookup = {0: "wordcount", 1: "audiolen"}
+        lookup = {0: "WC-base", 1: "AL-base"}
         result = [model_training(X,y,'baseline', model), lookup[i]]
-        scoring.append(result)
+        for layer in range(0,12):
+            scoring.append([layer]+result)
     return scoring
 
 
@@ -109,10 +114,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     print(f"start loading embedding for model")
-    dataset_dict = {"hubert":'/home/gshen/work_dir/spoken-model-syntax-probe/hubert_base_ls960_spokencoco_extracted.pt', 
-                    'wav2vec' :'/home/gshen/work_dir/spoken-model-syntax-probe/wav2vec_spokencoco_extracted.pt',
-                    'libri-wav2vec':'/home/gshen/work_dir/spoken-model-syntax-probe/wav2vec_small_librispeech_extracted.pt',
-                    'libri-hubert': '/home/gshen/work_dir/spoken-model-syntax-probe/hubert_base_ls960_librispeech_extracted.pt'
+    dataset_dict = {"hubert":'~/work_dir/spoken-model-syntax-probe/hubert_base_ls960_spokencoco_extracted.pt', 
+                    'wav2vec' :'~/work_dir/spoken-model-syntax-probe/wav2vec_spokencoco_extracted.pt',
+                    'libri-wav2vec':'~/work_dir/spoken-model-syntax-probe/wav2vec_small_librispeech_extracted.pt',
+                    'libri-hubert': '~/work_dir/spoken-model-syntax-probe/hubert_base_ls960_librispeech_extracted.pt'
                     }
     dataset = dataset_dict[args.dataset]
     embeddings, labels, annot, wav = zip(*torch.load(dataset))

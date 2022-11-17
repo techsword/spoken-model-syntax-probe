@@ -15,14 +15,14 @@ import argparse
 from custom_classes import Corpus
 from custom_functions import walk_librispeech_dirs, read_json_save_csv, generating_features
 
-# model_file = '/home/gshen/work_dir/spoken-model-syntax-probe/hubert_base_ls960.pt' #'/home/gshen/work_dir/wav2vec_small.pt' # 'hubert_base_ls960.pt' or 'wav2vec_small.pt'
+# model_file = '~/work_dir/spoken-model-syntax-probe/hubert_base_ls960.pt' #'~/work_dir/wav2vec_small.pt' # 'hubert_base_ls960.pt' or 'wav2vec_small.pt'
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 sr = 16000
 
 
 # librispeech settings
-librispeech_root = '/home/gshen/work_dir/librispeech-train/'# 'LibriSpeech/
+librispeech_root = '~/work_dir/librispeech-train/'# 'LibriSpeech/
 libri_split = 'train-clean-100' # 'test-clean'
 saved_file = libri_split+'-extracted.pt'
 
@@ -30,8 +30,8 @@ saved_file = libri_split+'-extracted.pt'
 
 # spokencoco settings
 
-json_path = '/home/gshen/SpokenCOCO/SpokenCOCO_val.json'
-root_dir='/home/gshen/SpokenCOCO/'
+json_path = '~/SpokenCOCO/SpokenCOCO_val.json'
+root_dir='~/SpokenCOCO/'
 
 csv_file = 'spokencoco_val.csv'
 
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # setting the model to extract embeddings and the output filename
-    model_dict = {'hubert': '/home/gshen/work_dir/spoken-model-syntax-probe/hubert_base_ls960.pt', 'wav2vec':'/home/gshen/work_dir/wav2vec_small.pt'}
+    model_dict = {'hubert': '~/work_dir/spoken-model-syntax-probe/hubert_base_ls960.pt', 'wav2vec':'~/work_dir/wav2vec_small.pt'}
     model_file = model_dict[args.model]
     saved_file = os.path.basename(model_file[:-3]) + '_' + args.corpus + '_extracted' + '.pt'
 
