@@ -9,20 +9,15 @@
 
 source /usr/local/anaconda3/etc/profile.d/conda.sh
 
-# conda config --add envs_dirs /home/gshen/.conda/envs
-# conda config --add pkgs_dirs /home/gshen/.conda/pkgs
 
 conda activate sklearn-env
 
-# python -u classifier.py 
-# counter=0
-# while [ $counter -le 11 ]
-# do
-    # echo $counter
-srun python -u model_run.py --layer $SLURM_ARRAY_TASK_ID  --model True --dataset libri-wav2vec #--num_data 10000
-    # ((counter++))
-# done
 
-# echo All done
+srun python -u model_run.py --layer $SLURM_ARRAY_TASK_ID  --model True --dataset $1 --modelname $2 #--num_data 10000
 
+
+
+srun python model_run.py --baseline True --dataset $1 > slurm-$SLURM_ARRAY_JOB_ID-baseline.out
+
+cat slurm-$SLURM_ARRAY_JOB_ID* | grep \]\] > $1-$2.out
 # Run 'srun python model_run.py --baseline True' to get baseline

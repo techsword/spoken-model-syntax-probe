@@ -114,10 +114,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     print(f"start loading embedding for model")
-    dataset_dict = {"hubert":'~/work_dir/spoken-model-syntax-probe/hubert_base_ls960_spokencoco_extracted.pt', 
-                    'wav2vec' :'~/work_dir/spoken-model-syntax-probe/wav2vec_spokencoco_extracted.pt',
-                    'libri-wav2vec':'~/work_dir/spoken-model-syntax-probe/wav2vec_small_librispeech_extracted.pt',
-                    'libri-hubert': '~/work_dir/spoken-model-syntax-probe/hubert_base_ls960_librispeech_extracted.pt'
+    dataset_dict = {"scc-hubert":'hubert_base_ls960_spokencoco_extracted.pt', 
+                    'scc-wav2vec' :'wav2vec_spokencoco_extracted.pt',
+                    'libri-wav2vec':'wav2vec_small_librispeech_extracted.pt',
+                    'libri-hubert': 'hubert_base_ls960_librispeech_extracted.pt'
                     }
     dataset = dataset_dict[args.dataset]
     embeddings, labels, annot, wav = zip(*torch.load(dataset))

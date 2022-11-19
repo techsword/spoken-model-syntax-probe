@@ -7,3 +7,4 @@ wav2vec_small_librispeech_extracted.pt
 spokencoco_val.csv
 librispeech_train-clean-100.csv
 extract_wav2vec.out
+./slurm-outfiles/*
