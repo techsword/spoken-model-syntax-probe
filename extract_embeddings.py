@@ -22,7 +22,7 @@ sr = 16000
 
 
 # librispeech settings
-librispeech_root = '~/work_dir/librispeech-train/'# 'LibriSpeech/
+librispeech_root = '/home/gshen/work_dir/librispeech-train/'# 'LibriSpeech/
 libri_split = 'train-clean-100' # 'test-clean'
 saved_file = libri_split+'-extracted.pt'
 
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # setting the model to extract embeddings and the output filename
-    model_dict = {'hubert': '~/work_dir/spoken-model-syntax-probe/hubert_base_ls960.pt', 'wav2vec':'~/work_dir/wav2vec_small.pt'}
+    model_dict = {'hubert': '/home/gshen/work_dir/spoken-model-syntax-probe/hubert_base_ls960.pt', 'wav2vec':'/home/gshen/work_dir/wav2vec_small.pt'}
     model_file = model_dict[args.model]
     saved_file = os.path.basename(model_file[:-3]) + '_' + args.corpus + '_extracted' + '.pt'
 

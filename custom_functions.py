@@ -54,19 +54,19 @@ def generating_features(dataset, model_file):
     model = loading_fairseq_model(model_file=model_file)
     for waveform, annot, depth, path in dataset:
         wordcount = len(str.split(annot))
-        if depth < 13 and depth > 5:
-            lab_list.append(depth)
-            annot_list.append(annot)
-            wav_path_list.append(path)
-            with torch.inference_mode():
-                features, _ = model.to(device).extract_features(waveform.to(device))
-                # print(features)
-                audio_len = len(waveform[-1])/sr
-                features = [torch.mean(x.cpu(),dim=1).squeeze().numpy() for x in features]
-                features = [np.append(layer,[audio_len]) for layer in features]
-                features = [np.append(layer,[wordcount]) for layer in features]
-                # feat_list.append(torch.mean(features,dim=1).squeeze().numpy())
-                feat_list.append(features)
+        # if depth < 13 and depth > 5:
+        lab_list.append(depth)
+        annot_list.append(annot)
+        wav_path_list.append(path)
+        with torch.inference_mode():
+            features, _ = model.to(device).extract_features(waveform.to(device))
+            # print(features)
+            audio_len = len(waveform[-1])/sr
+            features = [torch.mean(x.cpu(),dim=1).squeeze().numpy() for x in features]
+            features = [np.append(layer,[audio_len]) for layer in features]
+            features = [np.append(layer,[wordcount]) for layer in features]
+            # feat_list.append(torch.mean(features,dim=1).squeeze().numpy())
+            feat_list.append(features)
 
     
     print(f"there are {len(lab_list)} in the extracted dataset, each tensor is {features[0].shape}, the max tree depth is {max(lab_list)} and the min is {min(lab_list)}")
