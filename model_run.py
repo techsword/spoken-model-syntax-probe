@@ -106,7 +106,7 @@ if __name__ == "__main__":
                     help="choose the sklearn models to run here, default is ridge with cross validation. options: ridge, svm, logreg"
     )
     parser.add_argument('--dataset',
-                    type=str, default = 'hubert', metavar='dataset',
+                    type=str, default = 'scc-hubert', metavar='dataset',
                     help="choose embeddings extracted from which dataset to run here, default is hubert. options: wav2vec, hubert"
     )
 
@@ -117,7 +117,8 @@ if __name__ == "__main__":
     dataset_dict = {"scc-hubert":'hubert_base_ls960_spokencoco_extracted.pt', 
                     'scc-wav2vec' :'wav2vec_spokencoco_extracted.pt',
                     'libri-wav2vec':'wav2vec_small_librispeech_extracted.pt',
-                    'libri-hubert': 'hubert_base_ls960_librispeech_extracted.pt'
+                    'libri-hubert': 'hubert_base_ls960_librispeech_extracted.pt',
+                    'fast-vgs': '/home/gshen/work_dir/spoken-model-syntax-probe/fast_vgs_spokencoco_val_extracted.pt'
                     }
     dataset = dataset_dict[args.dataset]
     embeddings, labels, annot, wav = zip(*torch.load(dataset))
