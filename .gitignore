@@ -8,3 +8,10 @@ spokencoco_val.csv
 librispeech_train-clean-100.csv
 extract_wav2vec.out
 slurm-outfiles/slurm-10*
+bak.hubert_base_ls960_librispeech_extracted.pt
+__pycache__/custom_classes.cpython-39.pyc
+__pycache__/custom_functions.cpython-39.pyc
+__pycache__/plot_figs.cpython-39.pyc
+fast_vgs_librispeech_train_extracted.pt
+fast_vgs_spokencoco_val_extracted.pt
+bak.wav2vec_small_librispeech_extracted.pt

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --output=slurm-%A_layer%a.out
-#SBATCH --job-name="classification"
+#SBATCH --job-name="model_run"
 #SBATCH --time=4:00:00     # walltime
 #SBATCH --array=0-11%4
 #SBATCH --gres=gpu
