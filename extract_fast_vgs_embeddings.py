@@ -66,12 +66,23 @@ def generating_features(dataset, model, limit = None):
     return list(zip(feat_list, lab_list,annot_list,wav_path_list))
 
 if __name__ == '__main__':
-    root_dir='/home/gshen/SpokenCOCO/'
-    csv_file = 'spokencoco_val.csv'
-    spokencoco = Corpus(csv_file, root_dir = root_dir)
-
+    dataset_select = 'librispeech'
     fast_vgs = load_fast_vgs_model(split[0])
-    scc_extracted = generating_features(spokencoco, fast_vgs)
-    torch.save(scc_extracted, 'fast_vgs_spokencoco_val_extracted.pt')
 
+
+    if dataset_select == 'spokencoco':
+
+        root_dir='/home/gshen/SpokenCOCO/'
+        csv_file = 'spokencoco_val.csv'
+        dataset = Corpus(csv_file, root_dir = root_dir)
+        
+        scc_extracted = generating_features(dataset, fast_vgs)
+        torch.save(scc_extracted, 'fast_vgs_spokencoco_val_extracted.pt')
+
+    elif dataset_select == 'librispeech':
+        libri_split = 'train-clean-100'
+        librispeech_root = '/home/gshen/work_dir/librispeech-train/'
+        dataset = Corpus('librispeech_'+libri_split+'.csv', os.path.join(librispeech_root, libri_split))
+        libri_extracted = generating_features(dataset, fast_vgs)
+        torch.save(libri_extracted, 'fast_vgs_librispeech_train_extracted.pt')
 

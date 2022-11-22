@@ -118,7 +118,8 @@ if __name__ == "__main__":
                     'scc-wav2vec' :'wav2vec_spokencoco_extracted.pt',
                     'libri-wav2vec':'wav2vec_small_librispeech_extracted.pt',
                     'libri-hubert': 'hubert_base_ls960_librispeech_extracted.pt',
-                    'fast-vgs': '/home/gshen/work_dir/spoken-model-syntax-probe/fast_vgs_spokencoco_val_extracted.pt'
+                    'scc-fast-vgs': '/home/gshen/work_dir/spoken-model-syntax-probe/fast_vgs_spokencoco_val_extracted.pt',
+                    'libri-fast-vgs': '/home/gshen/work_dir/spoken-model-syntax-probe/fast_vgs_librispeech_train_extracted.pt'
                     }
     dataset = dataset_dict[args.dataset]
     embeddings, labels, annot, wav = zip(*torch.load(dataset))
