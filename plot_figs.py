@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from argparse import ArgumentParser
+import os
 
 
 df_dict = {'libri-train':'/home/gshen/work_dir/spoken-model-syntax-probe/hubert_base_ls960_librispeech_extracted.pt','scc-val': '/home/gshen/work_dir/spoken-model-syntax-probe/hubert_base_ls960_spokencoco_extracted.pt'}
@@ -19,11 +20,7 @@ df_dict = {'libri-train':'/home/gshen/work_dir/spoken-model-syntax-probe/hubert_
 #     df = pd.DataFrame(datalist, columns=['AL','WC','TreeDepth'])
 #     return df
 
-def get_meta_figs(df):
-    plt.figure()
-    sns.lmplot(data = df, x='TreeDepth', y = 'WC')
-    plt.figure()
-    sns.regplot(data = df, x='TreeDepth', y = 'AL')
+
 
 def make_AL_WC_plot(df_name, num_bin = 8):
     dataset = torch.load(df_dict[df_name])
@@ -51,7 +48,35 @@ def make_AL_WC_plot(df_name, num_bin = 8):
     al_plot.set(xlabel = '# Sent', ylabel = 'Audio length Bin')
     plt.savefig("figs/meta/audiolen-"+df_name+".png")
 
+    # Plot correlations between TreeDepth and WC/AL
+    plt.figure()
+    sns.lmplot(data = df, x='TreeDepth', y = 'WC')
+    plt.savefig("figs/meta/TDvsWC-"+df_name+".png")
+    plt.figure()
+    sns.regplot(data = df, x='TreeDepth', y = 'AL')
+    plt.savefig("figs/meta/TDvsAL-"+df_name+".png")
+
+
+def ridge_out_plot(file):
+    df = pd.read_csv(file, header=None, names=['layer', 'r2score', 'mse', 'model_alpha', 'feature'])
+    df.sort_values(by=['feature'], inplace=True)
+    plt.figure()
+    r2score_plot = sns.lineplot(data=df, x = 'layer', y = 'r2score', hue = 'feature')
+    r2score_plot.set(xlabel = 'Transformer Layer', ylabel = 'R2score', title=os.path.basename(file[:-4])+' R2score')
+    plt.savefig("figs/ridge/r2score-"+ os.path.basename(file[:-4]) +".png")
+    plt.figure()
+    mse_plot = sns.lineplot(data=df, x = 'layer', y = 'mse', hue = 'feature')
+    mse_plot.set(xlabel = 'Transformer Layer', ylabel = 'Mean Squared Error', title=os.path.basename(file[:-4])+' MSE')
+    plt.savefig("figs/ridge/mse-"+ os.path.basename(file[:-4]) +".png")
+
+
 
 if __name__ == "__main__":
-    for dataset in ['libri-train', 'scc-val']:
-        make_AL_WC_plot(dataset)
+    # for dataset in ['libri-train', 'scc-val']:
+    #     make_AL_WC_plot(dataset)
+
+    result_path = 'ridge-results/'
+    result_files = [os.path.join(result_path,x) for x in os.listdir(result_path)]
+    for file in result_files:
+        ridge_out_plot(file)
+    
