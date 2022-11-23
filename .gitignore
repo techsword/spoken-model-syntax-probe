@@ -15,3 +15,11 @@ __pycache__/plot_figs.cpython-39.pyc
 fast_vgs_librispeech_train_extracted.pt
 fast_vgs_spokencoco_val_extracted.pt
 bak.wav2vec_small_librispeech_extracted.pt
+weird_libri.out
+weirdsentences.out
+extracted_embeddings/fast_vgs_plus_librispeech_train_extracted.pt
+extracted_embeddings/fast_vgs_plus_spokencoco_val_extracted.pt
+extracted_embeddings/wav2vec_small_spokencoco_extracted.pt
+__pycache__/bow.cpython-39.pyc
+bow.ipynb
+fastvgs.ipynb

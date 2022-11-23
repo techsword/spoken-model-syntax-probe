@@ -72,22 +72,24 @@ def generating_features(dataset, model, limit = None):
 
 if __name__ == '__main__':
     dataset_select = 'librispeech'
-    fast_vgs = load_fast_vgs_model(split[0])
-
-
-    if dataset_select == 'spokencoco':
-
-        root_dir='/home/gshen/SpokenCOCO/'
-        csv_file = 'spokencoco_val.csv'
-        dataset = Corpus(csv_file, root_dir = root_dir)
+    for model_path in split:
+        fast_vgs = load_fast_vgs_model(model_path)
+        print(f'finished loading model from {model_path}')
         
-        scc_extracted = generating_features(dataset, fast_vgs)
-        torch.save(scc_extracted, 'fast_vgs_spokencoco_val_extracted.pt')
+        if dataset_select == 'spokencoco':
 
-    elif dataset_select == 'librispeech':
-        libri_split = 'train-clean-100'
-        librispeech_root = '/home/gshen/work_dir/librispeech-train/'
-        dataset = Corpus('librispeech_'+libri_split+'.csv', os.path.join(librispeech_root, libri_split))
-        libri_extracted = generating_features(dataset, fast_vgs)
-        torch.save(libri_extracted, 'fast_vgs_librispeech_train_extracted.pt')
+            root_dir='/home/gshen/SpokenCOCO/'
+            csv_file = 'spokencoco_val.csv'
+            dataset = Corpus(csv_file, root_dir = root_dir)
+            scc_extracted = generating_features(dataset, fast_vgs)
+            torch.save(scc_extracted, os.path.basename(model_path)[:-5]+'_spokencoco_val_extracted.pt')
+
+        elif dataset_select == 'librispeech':
+            libri_split = 'train-clean-100'
+            librispeech_root = '/home/gshen/work_dir/librispeech-train/'
+            dataset = Corpus('librispeech_'+libri_split+'.csv', os.path.join(librispeech_root, libri_split))
+            libri_extracted = generating_features(dataset, fast_vgs)
+            torch.save(libri_extracted, os.path.basename(model_path)[:-5]+'_librispeech_train_extracted.pt')
+
+        print(f'finished extracting embeddings from {dataset_select} with {model_path}')
 
