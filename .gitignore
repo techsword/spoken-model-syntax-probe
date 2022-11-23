@@ -23,3 +23,7 @@ extracted_embeddings/wav2vec_small_spokencoco_extracted.pt
 __pycache__/bow.cpython-39.pyc
 bow.ipynb
 fastvgs.ipynb
+extracted_embeddings/hubert_base_ls960_librispeech_train_extracted.pt
+extracted_embeddings/hubert_base_ls960_spokencoco_val_extracted.pt
+extracted_embeddings/wav2vec_small_librispeech_train_extracted.pt
+extracted_embeddings/wav2vec_small_spokencoco_val_extracted.pt

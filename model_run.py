@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 import pandas as pd
-import os 
+import os
 import pickle
 import re
 import stanza
@@ -34,7 +34,7 @@ def model_training(X,y, mode, model):
             X_train, X_test, y_train, y_test = train_test_split(np.array(X).reshape(-1,1), y, random_state = 42)
         elif mode == 'training':
             X_train, X_test, y_train, y_test = train_test_split(X, y, random_state = 42)
-        
+
         model.fit(X_train, y_train)
         if not str(type(model)) == "<class 'sklearn.linear_model._ridge.RidgeCV'>":
             y_pred = model.predict(X_test)
@@ -49,7 +49,7 @@ def model_training(X,y, mode, model):
             mse = mean_squared_error(y_test,y_pred)
             return r2score, mse, model_alpha
 
-def baseline(embeddings, labels, model):
+def baseline(embeddings, labels, model, num_layers):
     print(f'measuring baseline')
     wordcount_ = [x[-1] for x in embeddings]
     audio_len_ = [x[-2] for x in embeddings]
@@ -58,17 +58,17 @@ def baseline(embeddings, labels, model):
     for i, X in enumerate([wordcount_, audio_len_]):
         lookup = {0: "WC-base", 1: "AL-base"}
         result = [model_training(X,y,'baseline', model), lookup[i]]
-        for layer in range(0,12):
+        for layer in range(num_layers):
             scoring.append([layer]+result)
     return scoring
 
 
 def iter_layers(embeddings, labels, lay, model):
-   
+
     y = np.array(labels)
     scoring = []
     print(f"running model on layer {lay}")
-    # just audio 
+    # just audio
     # X = [np.delete(x[lay], [-2,-1]) for x in embeddings]
     X = [np.delete(x, [-2,-1]) for x in embeddings]
     scoring.append([lay, model_training(X, y,'training', model), 'embedding'])
@@ -82,7 +82,7 @@ def iter_layers(embeddings, labels, lay, model):
     X = [np.delete(x, -2) for x in embeddings]
     scoring.append([lay, model_training(X, y,'training', model), 'wordcount'])
     print(scoring)
-        
+
 
 
 
@@ -92,13 +92,13 @@ if __name__ == "__main__":
                     type = int, default = 0, metavar='layer',
                     help = 'add the layer number to train the regression model on'
     )
-    parser.add_argument('--num_data', 
+    parser.add_argument('--num_data',
                     type=int, default = None, metavar='num-data',
                     help='add the number of elements to include from the dataset')
-    parser.add_argument('--baseline', 
+    parser.add_argument('--baseline',
                     type=bool, default = False, metavar='baseline',
                     help='decide on if you want to measure the baseline ')
-    parser.add_argument('--model', 
+    parser.add_argument('--model',
                     type=bool, default = False, metavar='model',
                     help='actually training the model, default = False')
     parser.add_argument('--modelname',
@@ -114,21 +114,32 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     print(f"start loading embedding for model")
-    dataset_dict = {"scc-hubert":'hubert_base_ls960_spokencoco_extracted.pt', 
-                    'scc-wav2vec' :'wav2vec_spokencoco_extracted.pt',
-                    'libri-wav2vec':'wav2vec_small_librispeech_extracted.pt',
-                    'libri-hubert': 'hubert_base_ls960_librispeech_extracted.pt',
-                    'scc-fast-vgs': '/home/gshen/work_dir/spoken-model-syntax-probe/fast_vgs_spokencoco_val_extracted.pt',
-                    'libri-fast-vgs': '/home/gshen/work_dir/spoken-model-syntax-probe/fast_vgs_librispeech_train_extracted.pt'
+    path_to_extracted_embeddings = '/home/gshen/work_dir/spoken-model-syntax-probe/extracted_embeddings'
+    audio_model_names = {'hubert'   :'hubert_base_ls960',
+                        'fvgs'      : 'fast_vgs',
+                        'fvgs+'     :'fast_vgs_plus',
+                        'wav2vec'   : 'wav2vec_small'}
+
+    corpora_names = {'libri': 'librispeech_train',
+                    'scc'   : 'spokencoco_val'}
+
+    dataset_dict = {"scc-hubert":   os.path.join(path_to_extracted_embeddings, audio_model_names['hubert']+'_'+corpora_names['scc'] +"_extracted.pt" ),
+                    'scc-wav2vec' :os.path.join(path_to_extracted_embeddings, audio_model_names['wav2vec']+'_'+corpora_names['scc'] +"_extracted.pt" ),
+                    'libri-wav2vec':os.path.join(path_to_extracted_embeddings, audio_model_names['wav2vec']+'_'+corpora_names['libri'] +"_extracted.pt" ),
+                    'libri-hubert': os.path.join(path_to_extracted_embeddings, audio_model_names['hubert']+'_'+corpora_names['libri'] +"_extracted.pt" ),
+                    'scc-fast-vgs': os.path.join(path_to_extracted_embeddings, audio_model_names['fvgs']+'_'+corpora_names['scc'] +"_extracted.pt" ),
+                    'libri-fast-vgs': os.path.join(path_to_extracted_embeddings, audio_model_names['fvgs']+'_'+corpora_names['libri'] +"_extracted.pt" ),
+                    'scc-fast-vgs-plus': os.path.join(path_to_extracted_embeddings, audio_model_names['fvgs+']+'_'+corpora_names['scc'] +"_extracted.pt" ),
+                    'libri-fast-vgs-plus': os.path.join(path_to_extracted_embeddings, audio_model_names['fvgs+']+'_'+corpora_names['libri'] +"_extracted.pt" )
                     }
     dataset = dataset_dict[args.dataset]
     embeddings, labels, annot, wav = zip(*torch.load(dataset))
-
+    num_layers = len(embeddings)
     embeddings = [x[args.layer] for x in embeddings][:args.num_data]
     labels = labels[:args.num_data]
-    
+
     if args.baseline == True:
-        baseline_score = baseline(embeddings,labels,model=load_model(args.modelname))
+        baseline_score = baseline(embeddings,labels,model=load_model(args.modelname), num_layers = num_layers)
         print(f'the baseline score is \n {baseline_score}')
     elif args.model == True:
         iter_layers(embeddings=embeddings, labels = labels, lay = args.layer,model=load_model(args.modelname))
