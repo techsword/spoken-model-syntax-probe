@@ -1,7 +1,7 @@
 import sys
 import os
 import pickle
-model_dir = "model_path"
+model_dir = "/home/gshen/work_dir/spoken-model-syntax-probe/fast_vgs_family/model_path"
 split = ['fast_vgs_family/model_path/fast-vgs-coco', 'fast_vgs_family/model_path/fast-vgs-plus-coco']
 import torch
 import numpy as np
@@ -22,11 +22,16 @@ def load_fast_vgs_model(model_path):
     # load weights
     weights = torch.load(os.path.join(model_path, "best_bundle.pth"))
 
-    # if want to use the entire model for e.g. speech-image retrieval (need to first follow section 3 below)
-    dual_encoder = fast_vgs.DualEncoder(args)
-    cross_encoder = fast_vgs.CrossEncoder(args)
-    dual_encoder.load_state_dict(weights['dual_encoder'])
-    cross_encoder.load_state_dict(weights['cross_encoder'])
+    # # if want to use the entire model for e.g. speech-image retrieval (need to first follow section 3 below)
+    # dual_encoder = fast_vgs.DualEncoder(args)
+    # cross_encoder = fast_vgs.CrossEncoder(args)
+    # dual_encoder.load_state_dict(weights['dual_encoder'])
+    # cross_encoder.load_state_dict(weights['cross_encoder'])
+
+    if 'plus' in model_path:
+        args_dict = vars(args)
+        args_dict['trim_mask'] = False
+
 
     # if only want to use the audio branch for e.g. feature extraction for speech downstream tasks
     # if you are loading fast-vgs features, it will say that weights of layer 8-11 (0-based) are not seed_dir, that's fine, because fast-vgs only has first 8 layers (i.e. layer 0-7) of w2v2 model, last four layers will be randomly initialized layers
