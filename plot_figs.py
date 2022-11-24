@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 import os
 
 
-df_dict = {'libri-train':'/home/gshen/work_dir/spoken-model-syntax-probe/hubert_base_ls960_librispeech_extracted.pt','scc-val': '/home/gshen/work_dir/spoken-model-syntax-probe/hubert_base_ls960_spokencoco_extracted.pt'}
+df_dict = {'libri-train':'/home/gshen/work_dir/spoken-model-syntax-probe/extracted_embeddings/hubert_base_ls960_librispeech_train_extracted.pt','scc-val': '/home/gshen/work_dir/spoken-model-syntax-probe/extracted_embeddings/hubert_base_ls960_spokencoco_val_extracted.pt'}
 
 
 # def return_meta_pd(dataset):
@@ -55,6 +55,7 @@ def make_AL_WC_plot(df_name, num_bin = 8):
     plt.figure()
     sns.regplot(data = df, x='TreeDepth', y = 'AL')
     plt.savefig("figs/meta/TDvsAL-"+df_name+".png")
+    plt.close('all')
 
 
 def ridge_out_plot(file):
@@ -68,12 +69,13 @@ def ridge_out_plot(file):
     mse_plot = sns.lineplot(data=df, x = 'layer', y = 'mse', hue = 'feature')
     mse_plot.set(xlabel = 'Transformer Layer', ylabel = 'Mean Squared Error', title=os.path.basename(file[:-4])+' MSE')
     plt.savefig("figs/ridge/mse-"+ os.path.basename(file[:-4]) +".png")
+    plt.close('all')
 
 
 
 if __name__ == "__main__":
-    # for dataset in ['libri-train', 'scc-val']:
-    #     make_AL_WC_plot(dataset)
+    for dataset in ['libri-train', 'scc-val']:
+        make_AL_WC_plot(dataset)
 
     result_path = 'ridge-results/'
     result_files = [os.path.join(result_path,x) for x in os.listdir(result_path)]

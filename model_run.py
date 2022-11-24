@@ -134,7 +134,7 @@ if __name__ == "__main__":
                     }
     dataset = dataset_dict[args.dataset]
     embeddings, labels, annot, wav = zip(*torch.load(dataset))
-    num_layers = len(embeddings)
+    num_layers = len(embeddings[0])
     embeddings = [x[args.layer] for x in embeddings][:args.num_data]
     labels = labels[:args.num_data]
 
