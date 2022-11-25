@@ -17,7 +17,6 @@ srun python -u model_run.py --layer $SLURM_ARRAY_TASK_ID  --model True --dataset
 
 
 
-srun python model_run.py --baseline True --dataset $1 > slurm-$SLURM_ARRAY_JOB_ID-baseline.out
+# srun python model_run.py --baseline True --dataset $1 > slurm-$SLURM_ARRAY_JOB_ID-baseline.out
 
-cat slurm-$SLURM_ARRAY_JOB_ID* | grep \]\] > $1-$2.out
-# Run 'srun python model_run.py --baseline True' to get baseline
+cat slurm-$SLURM_ARRAY_JOB_ID* | grep \]\] >> $1-$2.out
