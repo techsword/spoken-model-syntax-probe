@@ -9,6 +9,7 @@ import os
 import pickle
 import re
 import json
+from sklearn.feature_extraction.text import CountVectorizer
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -44,7 +45,17 @@ def walk_librispeech_dirs(librispeech_root, libri_split):
     merge_df = pd.merge(df,df_txt, on = 'fileid')
     return merge_df
     
-
+def make_bow(doc):
+    
+    doc = list(map(str.lower, doc))
+    unique_words = set(' '.join(doc).split())
+    print(f'there are {len(unique_words)} unique words')
+    index_dict = {}
+    for ind, i in enumerate(sorted(unique_words)):
+        index_dict[i] = ind
+    cv = CountVectorizer(token_pattern=r"(?u)\b\w+\b")
+    count_occurrences = cv.fit_transform(doc)
+    return count_occurrences.toarray()
 
 def generating_features(dataset, model_file):
     feat_list = []
