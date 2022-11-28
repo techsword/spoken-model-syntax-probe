@@ -50,11 +50,10 @@ def model_training(X,y, model):
             mse = mean_squared_error(y_test,y_pred)
             return r2score, mse, model_alpha
 
-def baseline(embeddings, labels, model):
-    print(f'measuring baseline')
+def baseline(embeddings, y, model):
     wordcount_ = [x[-1] for x in embeddings]
     audio_len_ = [x[-2] for x in embeddings]
-    y = np.array(labels)
+    # y = np.array(labels)
     scoring = []
     for i, X in enumerate([wordcount_, audio_len_]):
         lookup = {0: "WC-base", 1: "AL-base"}
@@ -63,9 +62,9 @@ def baseline(embeddings, labels, model):
     return scoring
 
 
-def iter_layers(embeddings, labels, lay, model, combination = False):
+def iter_layers(embeddings, y, lay, model, combination = False):
 
-    y = np.array(labels)
+    # y = np.array(labels)
     scoring = []
     print(f"running model on layer {lay}")
     # just audio
@@ -90,10 +89,10 @@ def iter_layers(embeddings, labels, lay, model, combination = False):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='controlling number of data and layer used in model training')
-    parser.add_argument('--layer',
-                    type = int, default = 0, metavar='layer',
-                    help = 'add the layer number to train the regression model on'
-    )
+    # parser.add_argument('--layer',
+    #                 type = int, default = 0, metavar='layer',
+    #                 help = 'add the layer number to train the regression model on'
+    # )
     parser.add_argument('--num_data',
                     type=int, default = None, metavar='num-data',
                     help='add the number of elements to include from the dataset')
@@ -138,24 +137,37 @@ if __name__ == "__main__":
     audio_embeddings, labels, annot, wav = zip(*torch.load(dataset))
     BOW_array = make_bow(annot)
     num_layers = len(audio_embeddings[0])
-    embeddings = [x[args.layer] for x in audio_embeddings][:args.num_data]
-    labels = labels[:args.num_data]
+    labels = np.array(labels[:args.num_data])
+
 
     if args.baseline == True:
-        baseline_score = baseline(embeddings,labels, load_model(args.modelname))
-        BOW_baseline = list(model_training(BOW_array, labels,load_model(args.modelname)))
+        print(f'measuring baseline')
+        embeddings = [x[0] for x in audio_embeddings][:args.num_data]
+        wordcount_ = [x[-1] for x in embeddings]
+        audio_len_ = [x[-2] for x in embeddings]
+        # baseline_score = baseline(embeddings,labels, load_model(args.modelname))
+        print(f"measuring BOW baseline")
+        WC_baseline = model_training(wordcount_,labels,load_model(args.modelname))
+        BOW_baseline = model_training(BOW_array,labels,load_model(args.modelname))
+        AL_baseline = model_training(audio_len_,labels,load_model(args.modelname))
         scoring = []
         for layer in range(num_layers):
-            scoring += ([layer] + list(BOW_baseline)+['BOW'])
-            
-            scoring += [[layer] + x for x in list(baseline_score)]
+            scoring += [[layer] + list(BOW_baseline)+['BOW-baseline']]
+            scoring += [[layer] + list(WC_baseline)+['WC-baseline']]
+            scoring += [[layer] + list(AL_baseline)+['AL-baseline']]
+            # scoring += [[layer] + x for x in list(baseline_score)]
         print(f'the baseline score is \n {scoring}')
+    
     elif args.model == True:
-        scoring = []
-        scoring += iter_layers(embeddings, labels, args.layer, load_model(args.modelname), True)
-        bigarray = np.concatenate((BOW_array, embeddings), axis=1)
-        scoring += [ x + ['BOW'] for x in iter_layers(bigarray, labels, args.layer, load_model(args.modelname))]
-        print(scoring)
+        for i in range(num_layers):
+            embeddings = [x[i] for x in audio_embeddings][:args.num_data]
+            scoring = []
+            # results = iter_layers(embeddings, labels, args.layer, load_model(args.modelname), True)
+            # scoring += results
+            bigarray = np.concatenate((BOW_array, embeddings), axis=1)
+            bow_results = iter_layers(bigarray, labels, i, load_model(args.modelname))
+            scoring += [x + ['BOW'] for x in bow_results]
+            print(scoring)
 
 
 

@@ -74,11 +74,11 @@ def ridge_out_plot(file):
 
 
 if __name__ == "__main__":
-    for dataset in ['libri-train', 'scc-val']:
-        make_AL_WC_plot(dataset)
+    # for dataset in ['libri-train', 'scc-val']:
+    #     make_AL_WC_plot(dataset)
 
     result_path = 'ridge-results/'
-    result_files = [os.path.join(result_path,x) for x in os.listdir(result_path)]
+    result_files = [os.path.join(result_path,x) for x in os.listdir(result_path) if 'ridge' in x]
     for file in result_files:
         ridge_out_plot(file)
     
