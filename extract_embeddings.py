@@ -30,8 +30,8 @@ saved_file = libri_split+'-extracted.pt'
 
 # spokencoco settings
 
-json_path = '~/SpokenCOCO/SpokenCOCO_val.json'
-root_dir='~/SpokenCOCO/'
+json_path = '/home/gshen/SpokenCOCO/SpokenCOCO_val.json'
+root_dir='/home/gshen/SpokenCOCO/'
 
 csv_file = 'spokencoco_val.csv'
 
@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     parser.add_argument('--model',
                     type=str, default = 'hubert', metavar='model',
-                    help="choose the model used to extract embeddings, default is hubert. options: hubert, wav2vec"
+                    help="choose the model used to extract embeddings, default is hubert. options: hubert, wav2vec, random"
     )
     parser.add_argument('--corpus',
                     type=str, default = 'spokencoco', metavar='corpus',
@@ -52,8 +52,28 @@ if __name__ == "__main__":
 
     # setting the model to extract embeddings and the output filename
     model_dict = {'hubert': '/home/gshen/work_dir/spoken-model-syntax-probe/hubert_base_ls960.pt', 'wav2vec':'/home/gshen/work_dir/wav2vec_small.pt'}
-    model_file = model_dict[args.model]
-    saved_file = os.path.basename(model_file[:-3]) + '_' + args.corpus + '_extracted' + '.pt'
+    if args.model != 'random':
+        model_file = model_dict[args.model]
+        saved_file = os.path.basename(model_file[:-3]) + '_' + args.corpus + '_extracted' + '.pt'
+        from custom_functions import loading_fairseq_model
+        model = loading_fairseq_model(model_file)
+    else:
+        from transformers import Wav2Vec2Config, Wav2Vec2Model
+
+        # Initializing a Wav2Vec2 facebook/wav2vec2-base-960h style configuration
+        configuration = Wav2Vec2Config()
+
+        # Initializing a model (with random weights) from the facebook/wav2vec2-base-960h style configuration
+        hf_model = Wav2Vec2Model(configuration)
+
+        # Accessing the model configuration
+        configuration = hf_model.config
+
+        saved_file = 'wav2vec_random_' + args.corpus + '_extracted.pt'
+        from custom_functions import loading_huggingface_model
+        model = loading_huggingface_model(hf_model)
+
+
 
 
     if args.corpus == 'spokencoco':
@@ -65,7 +85,7 @@ if __name__ == "__main__":
             spokencoco_df.to_csv(csv_file, header=None, index = None)
         print(f"generating features")
         spokencoco = Corpus(csv_file, root_dir = root_dir)
-        spokencoco_extracted = generating_features(spokencoco, model_file)
+        spokencoco_extracted = generating_features(spokencoco, model)
         print(f"saving the extracted embeddings to {saved_file}")
         torch.save(spokencoco_extracted, saved_file)
 
@@ -78,7 +98,7 @@ if __name__ == "__main__":
             librispeech_dataset_df.to_csv('librispeech_'+libri_split+'.csv', index=False)
         print(f"generating features")
         libri_ds = Corpus('librispeech_'+libri_split+'.csv', os.path.join(librispeech_root, libri_split))
-        libri_extracted = generating_features(libri_ds, model_file)
+        libri_extracted = generating_features(libri_ds, model)
         print(f"saving the extracted embeddings to {saved_file}")
         torch.save(libri_extracted, saved_file)
 

@@ -24,6 +24,11 @@ def loading_fairseq_model(model_file):
     imported = import_fairseq_model(original)
     return imported
 
+def loading_huggingface_model(hf_model):
+    from torchaudio.models.wav2vec2.utils import import_huggingface_model
+    model = import_huggingface_model(hf_model)
+    return model
+
 def walk_librispeech_dirs(librispeech_root, libri_split):
     libri_split_path = os.path.join(librispeech_root,libri_split)
     filelist = []
@@ -57,12 +62,11 @@ def make_bow(doc):
     count_occurrences = cv.fit_transform(doc)
     return count_occurrences.toarray()
 
-def generating_features(dataset, model_file):
+def generating_features(dataset, model):
     feat_list = []
     lab_list = []
     annot_list = []
     wav_path_list = []
-    model = loading_fairseq_model(model_file=model_file)
     for waveform, annot, depth, path in dataset:
         wordcount = len(str.split(annot))
         # if depth < 13 and depth > 5:
