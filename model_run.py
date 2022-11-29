@@ -119,7 +119,8 @@ if __name__ == "__main__":
     audio_model_names = {'hubert'   :'hubert_base_ls960',
                         'fvgs'      : 'fast_vgs',
                         'fvgs+'     :'fast_vgs_plus',
-                        'wav2vec'   : 'wav2vec_small'}
+                        'wav2vec'   : 'wav2vec_small',
+                        'wav2vec-random': 'wav2vec_random'}
 
     corpora_names = {'libri': 'librispeech_train',
                     'scc'   : 'spokencoco_val'}
@@ -127,6 +128,8 @@ if __name__ == "__main__":
     dataset_dict = {"scc-hubert":   os.path.join(path_to_extracted_embeddings, audio_model_names['hubert']+'_'+corpora_names['scc'] +"_extracted.pt" ),
                     'scc-wav2vec' :os.path.join(path_to_extracted_embeddings, audio_model_names['wav2vec']+'_'+corpora_names['scc'] +"_extracted.pt" ),
                     'libri-wav2vec':os.path.join(path_to_extracted_embeddings, audio_model_names['wav2vec']+'_'+corpora_names['libri'] +"_extracted.pt" ),
+                    'scc-wav2vec-random' :os.path.join(path_to_extracted_embeddings, audio_model_names['wav2vec-random']+'_'+corpora_names['scc'] +"_extracted.pt" ),
+                    'libri-wav2vec-random':os.path.join(path_to_extracted_embeddings, audio_model_names['wav2vec-random']+'_'+corpora_names['libri'] +"_extracted.pt" ),
                     'libri-hubert': os.path.join(path_to_extracted_embeddings, audio_model_names['hubert']+'_'+corpora_names['libri'] +"_extracted.pt" ),
                     'scc-fast-vgs': os.path.join(path_to_extracted_embeddings, audio_model_names['fvgs']+'_'+corpora_names['scc'] +"_extracted.pt" ),
                     'libri-fast-vgs': os.path.join(path_to_extracted_embeddings, audio_model_names['fvgs']+'_'+corpora_names['libri'] +"_extracted.pt" ),
@@ -162,11 +165,11 @@ if __name__ == "__main__":
         for i in range(num_layers):
             embeddings = [x[i] for x in audio_embeddings][:args.num_data]
             scoring = []
-            # results = iter_layers(embeddings, labels, args.layer, load_model(args.modelname), True)
-            # scoring += results
-            bigarray = np.concatenate((BOW_array, embeddings), axis=1)
-            bow_results = iter_layers(bigarray, labels, i, load_model(args.modelname))
-            scoring += [x + ['BOW'] for x in bow_results]
+            results = iter_layers(embeddings, labels, i, load_model(args.modelname), True)
+            scoring += results
+            # bigarray = np.concatenate((BOW_array, embeddings), axis=1)
+            # bow_results = iter_layers(bigarray, labels, i, load_model(args.modelname))
+            # scoring += [x + ['BOW'] for x in bow_results]
             print(scoring)
 
 
