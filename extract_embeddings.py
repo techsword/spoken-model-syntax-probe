@@ -1,14 +1,6 @@
 import torch
-import torchaudio
 from torchsummary import summary
-from torch.utils.data import Dataset, DataLoader
-import fairseq
-import numpy as np
-import pandas as pd
 import os 
-import pickle
-import re
-import json
 import argparse
 
 
@@ -38,7 +30,7 @@ csv_file = 'spokencoco_val.csv'
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='controlling number of data and layer used in model training')
+    parser = argparse.ArgumentParser(description='control what model and which dataset you are using for embedding extraction')
 
     parser.add_argument('--model',
                     type=str, default = 'hubert', metavar='model',
@@ -74,7 +66,7 @@ if __name__ == "__main__":
         model = loading_huggingface_model(hf_model)
 
 
-
+    save_path = 'extracted_embeddings'
 
     if args.corpus == 'spokencoco':
         # extract embeddings with the model defined above from spokencoco corpus
@@ -87,7 +79,7 @@ if __name__ == "__main__":
         spokencoco = Corpus(csv_file, root_dir = root_dir)
         spokencoco_extracted = generating_features(spokencoco, model)
         print(f"saving the extracted embeddings to {saved_file}")
-        torch.save(spokencoco_extracted, saved_file)
+        torch.save(spokencoco_extracted, os.path.join(save_path, saved_file))
 
     elif args.corpus == "librispeech":
         # extract embeddings with the model defined above from librispeech corpus
@@ -100,7 +92,7 @@ if __name__ == "__main__":
         libri_ds = Corpus('librispeech_'+libri_split+'.csv', os.path.join(librispeech_root, libri_split))
         libri_extracted = generating_features(libri_ds, model)
         print(f"saving the extracted embeddings to {saved_file}")
-        torch.save(libri_extracted, saved_file)
+        torch.save(libri_extracted, os.path.join(save_path,saved_file))
 
 
     

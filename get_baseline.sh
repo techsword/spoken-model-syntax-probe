@@ -6,6 +6,11 @@
 #SBATCH --gres=gpu
 #SBATCH -p GPU
 
-srun python model_run.py --baseline True --dataset libri-hubert | grep \]\] > baselines-libri.out
+source /usr/local/anaconda3/etc/profile.d/conda.sh
 
-srun python model_run.py --baseline True --dataset scc-hubert | grep \]\] > baselines-scc.out
+
+conda activate sklearn-env
+
+srun python model_run.py --baseline True --dataset libri-wav2vec-random | grep \]\] > ridge-results/baselines-libri-random.out
+
+srun python model_run.py --baseline True --dataset scc-wav2vec-random | grep \]\] > ridge-results/baselines-scc-random.out

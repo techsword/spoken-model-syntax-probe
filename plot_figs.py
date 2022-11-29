@@ -1,6 +1,4 @@
 import torch
-import torchaudio
-from torchsummary import summary
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -10,15 +8,6 @@ import os
 
 
 df_dict = {'libri-train':'/home/gshen/work_dir/spoken-model-syntax-probe/extracted_embeddings/hubert_base_ls960_librispeech_train_extracted.pt','scc-val': '/home/gshen/work_dir/spoken-model-syntax-probe/extracted_embeddings/hubert_base_ls960_spokencoco_val_extracted.pt'}
-
-
-# def return_meta_pd(dataset):
-#     datalist = []
-#     for sent in dataset:
-#         datalist.append(list(sent[0][0][-2:])+[sent[1]])
-
-#     df = pd.DataFrame(datalist, columns=['AL','WC','TreeDepth'])
-#     return df
 
 
 
@@ -74,8 +63,8 @@ def ridge_out_plot(file):
 
 
 if __name__ == "__main__":
-    # for dataset in ['libri-train', 'scc-val']:
-    #     make_AL_WC_plot(dataset)
+    for dataset in ['libri-train', 'scc-val']:
+        make_AL_WC_plot(dataset)
 
     result_path = 'ridge-results/'
     result_files = [os.path.join(result_path,x) for x in os.listdir(result_path) if 'ridge' in x]
