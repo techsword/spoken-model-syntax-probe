@@ -29,3 +29,9 @@ extracted_embeddings/wav2vec_small_librispeech_train_extracted.pt
 extracted_embeddings/wav2vec_small_spokencoco_val_extracted.pt
 extract_fast_vgs.out
 extract.sh
+__pycache__/infersent.cpython-39.pyc
+encoder/infersent2.pkl
+extracted_embeddings/wav2vec_random_librispeech_train_extracted.pt
+extracted_embeddings/wav2vec_random_spokencoco_val_extracted.pt
+GloVe/glove.840B.300d.txt
+GloVe/glove.840B.300d.zip
