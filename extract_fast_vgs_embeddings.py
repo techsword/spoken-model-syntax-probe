@@ -8,7 +8,7 @@ import numpy as np
 from fast_vgs_family.models import fast_vgs, w2v2_model
 import argparse
 
-from custom_classes import Corpus
+from utils.custom_classes import Corpus
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 from itertools import islice
@@ -41,7 +41,7 @@ def load_fast_vgs_model(model_path):
     return model
 
 
-def generating_features(dataset, model, limit = None):
+def fast_vgs_feat_gen(dataset, model, limit = None):
     feat_list = []
     lab_list = []
     annot_list = []
@@ -90,14 +90,14 @@ if __name__ == '__main__':
         root_dir='/home/gshen/SpokenCOCO/'
         csv_file = 'spokencoco_val.csv'
         dataset = Corpus(csv_file, root_dir = root_dir)
-        scc_extracted = generating_features(dataset, fast_vgs)
+        scc_extracted = fast_vgs_feat_gen(dataset, fast_vgs)
         torch.save(scc_extracted, os.path.join(save_path, args.model+'_spokencoco_val_extracted.pt'))
 
     elif dataset_select == 'librispeech':
         libri_split = 'train-clean-100'
         librispeech_root = '/home/gshen/work_dir/librispeech-train/'
         dataset = Corpus('librispeech_'+libri_split+'.csv', os.path.join(librispeech_root, libri_split))
-        libri_extracted = generating_features(dataset, fast_vgs)
+        libri_extracted = fast_vgs_feat_gen(dataset, fast_vgs)
         torch.save(libri_extracted, os.path.join(save_path, args.model+'_librispeech_train_extracted.pt'))
 
     print(f'finished extracting embeddings from {dataset_select} with {args.model}')

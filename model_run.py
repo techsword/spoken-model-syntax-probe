@@ -16,7 +16,7 @@ from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.linear_model import RidgeCV
 from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
-from custom_functions import make_bow
+from utils.custom_functions import make_bow
 
 # nlp = stanza.Pipeline(lang='en', processors='tokenize,pos,constituency')
 
@@ -167,9 +167,9 @@ if __name__ == "__main__":
             scoring = []
             results = iter_layers(embeddings, labels, i, load_model(args.modelname), True)
             scoring += results
-            # bigarray = np.concatenate((BOW_array, embeddings), axis=1)
-            # bow_results = iter_layers(bigarray, labels, i, load_model(args.modelname))
-            # scoring += [x + ['BOW'] for x in bow_results]
+            bigarray = np.concatenate((BOW_array, embeddings), axis=1)
+            bow_results = iter_layers(bigarray, labels, i, load_model(args.modelname))
+            scoring += [x + ['BOW'] for x in bow_results]
             print(scoring)
 
 
