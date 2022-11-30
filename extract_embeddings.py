@@ -1,50 +1,30 @@
+import argparse
+import os
+import pickle
+from itertools import islice
+
+import numpy as np
 import torch
 from torchsummary import summary
-import os 
-import argparse
 
-
+from fast_vgs_family.models import fast_vgs, w2v2_model
 from utils.custom_classes import Corpus
-from utils.custom_functions import walk_librispeech_dirs, read_json_save_csv, generating_features
-
-# model_file = '~/work_dir/spoken-model-syntax-probe/hubert_base_ls960.pt' #'~/work_dir/wav2vec_small.pt' # 'hubert_base_ls960.pt' or 'wav2vec_small.pt'
+from utils.custom_functions import (generating_features, read_json_save_csv,
+                                    walk_librispeech_dirs)
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 sr = 16000
 
-
 # librispeech settings
 librispeech_root = '/home/gshen/work_dir/librispeech-train/'# 'LibriSpeech/
 libri_split = 'train-clean-100' # 'test-clean'
-saved_file = libri_split+'-extracted.pt'
-
-
 
 # spokencoco settings
 
 json_path = '/home/gshen/SpokenCOCO/SpokenCOCO_val.json'
 root_dir='/home/gshen/SpokenCOCO/'
-
 csv_file = 'spokencoco_val.csv'
 
-
-
-import sys
-import os
-import pickle
-model_dir = "/home/gshen/work_dir/spoken-model-syntax-probe/fast_vgs_family/model_path"
-split = {'fast-vgs':'fast_vgs_family/model_path/fast-vgs-coco', 'fast-vgs-plus':'fast_vgs_family/model_path/fast-vgs-plus-coco'}
-import torch
-import numpy as np
-from fast_vgs_family.models import fast_vgs, w2v2_model
-import argparse
-
-from utils.custom_classes import Corpus
-
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-from itertools import islice
-
-sr = 16000
 
 def load_fast_vgs_model(model_path):
     # load args
@@ -124,6 +104,7 @@ if __name__ == '__main__':
 
         elif args.model == 'random':
             from transformers import Wav2Vec2Config, Wav2Vec2Model
+
             # Initializing a Wav2Vec2 facebook/wav2vec2-base-960h style configuration
             configuration = Wav2Vec2Config()
             # Initializing a model (with random weights) from the facebook/wav2vec2-base-960h style configuration
@@ -161,6 +142,11 @@ if __name__ == '__main__':
             torch.save(libri_extracted, os.path.join(save_path,saved_file))
 
     elif 'fast-vgs' in args.model:
+        
+
+        model_dir = "/home/gshen/work_dir/spoken-model-syntax-probe/fast_vgs_family/model_path"
+        split = {'fast-vgs':'fast_vgs_family/model_path/fast-vgs-coco', 'fast-vgs-plus':'fast_vgs_family/model_path/fast-vgs-plus-coco'}
+
         fast_vgs = load_fast_vgs_model(split[args.model])
         print(f'finished loading model  {args.model}')
         if args.corpus == 'spokencoco':
