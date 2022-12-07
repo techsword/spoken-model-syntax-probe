@@ -1,21 +1,20 @@
-import torch
-import numpy as np
-import pandas as pd
+import argparse
 import os
 import pickle
 import re
-import stanza
 import sys
-import argparse
 import time
 
-
-from sklearn.metrics import confusion_matrix
+import numpy as np
+import pandas as pd
+import stanza
+import torch
+from sklearn.linear_model import LogisticRegression, RidgeCV
+from sklearn.metrics import (accuracy_score, confusion_matrix,
+                             mean_squared_error, r2_score)
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
-from sklearn.linear_model import LogisticRegression
-from sklearn.linear_model import RidgeCV
-from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
+
 from utils.custom_functions import make_bow
 
 # nlp = stanza.Pipeline(lang='en', processors='tokenize,pos,constituency')

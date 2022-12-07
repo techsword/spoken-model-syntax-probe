@@ -1,15 +1,17 @@
-import torch
-import torchaudio
-from torchsummary import summary
-from torch.utils.data import Dataset, DataLoader
+import json
+import os
+import pickle
+import re
+
 import fairseq
 import numpy as np
 import pandas as pd
-import os 
-import pickle
-import re
-import json
 import stanza
+import torch
+import torchaudio
+from torch.utils.data import DataLoader, Dataset
+from torchsummary import summary
+
 nlp = stanza.Pipeline(lang='en', processors='tokenize,pos,constituency')
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
