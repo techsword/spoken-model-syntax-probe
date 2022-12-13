@@ -4,7 +4,7 @@ from torchsummary import summary
 import os 
 
 
-from custom_classes import Corpus
+from utils.custom_classes import Corpus
 
 spokencoco_dir='/home/gshen/SpokenCOCO/'
 spokencoco_csv = 'spokencoco_val.csv'
