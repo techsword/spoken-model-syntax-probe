@@ -17,11 +17,14 @@ def audio_pairwise_distance_calc(dataset):
         audio_emb = [x[0][layer][:-2] for x in dataset]
         # layer_distance = pairwise_distances(audio_emb, metric='cosine', n_jobs=-1)
         # layer_distance = U.pairwise(cosine,audio_emb, parallel=True)
-        tensor = torch.from_numpy(np.array(audio_emb).astype('float16'))
-        layer_similarity = pairwise_cosine_similarity(tensor.to(device)).cpu()
-        layer_similarity[layer_similarity == 0] = 1
+        tensor = torch.from_numpy(np.array(audio_emb))
+        layer_similarity_ = pairwise_cosine_similarity(tensor.to(device)).cpu()
+        # layer_similarity[layer_similarity == 0] = 1
+        layer_similarity = torch.diagonal(layer_similarity_,1)[::2].clone()
+        pairwise_distance_container[layer] = layer_similarity
         # pairwise_distance_container[layer] = layer_distance
-        pairwise_distance_container[layer] = U.triu(layer_similarity)
+
+        # pairwise_distance_container[layer] = U.triu(layer_similarity)
     return pairwise_distance_container
 
 if __name__ == "__main__":
@@ -33,19 +36,24 @@ if __name__ == "__main__":
     # distance_lookup = {}
 
     for i in dataset_lookup:
-        save_file = i+'_pairwise_distance.pt'
+        save_file = i+'_pairwise_distance_selected.pt'
         if os.path.isfile(save_file):
             print(f"{save_file} already exists! skipping for now")
 
         else:
             print('calculating pairwise distance of audio emb from', i)
             dataset = torch.load(dataset_lookup[i])
+            if 'libri' in i:
+                dataset = [x for x in dataset if len(str.split(x[2])) < 52]
+
+            elif 'spokencoco' in i:
+                dataset = [x for x in dataset if len(str.split(x[2])) < 20]
             distance_calculated = audio_pairwise_distance_calc(dataset)
 
             distance_lookup = distance_calculated
 
         
-            torch.save(distance_lookup, save_file)
+            torch.save(distance_lookup, 'pairwise_distances/'+save_file)
 
             # break
 
