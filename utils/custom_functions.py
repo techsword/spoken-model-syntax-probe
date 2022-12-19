@@ -3,7 +3,6 @@ import os
 import pickle
 import re
 
-import fairseq
 import numpy as np
 import pandas as pd
 import torch
@@ -19,6 +18,8 @@ sr = 16000
 
 
 def loading_fairseq_model(model_file):
+    import fairseq
+
     from torchaudio.models.wav2vec2.utils import import_fairseq_model
     model, _, _ = fairseq.checkpoint_utils.load_model_ensemble_and_task([model_file])
     original = model[0]
@@ -145,3 +146,35 @@ def read_json_save_csv(json_path):
     
     # print(f"there are {len(lab_list)} in the extracted dataset, each tensor is {features[0].shape}, the max tree depth is {max(lab_list)} and the min is {min(lab_list)}")
     # return list(zip(feat_list, lab_list,annot_list,wav_path_list))
+
+
+
+def get_weird_sents(corpus_csv, root_dir):
+    from custom_classes import Corpus
+    corpus_ = Corpus(corpus_csv, root_dir)
+    weird_sents = [x for x in [corpus_.get_depth(i) for i in range(len(corpus_))] if x[1] > len(str.split(x[0]))+2]
+    print(f'there are total {len(weird_sents)} sentences')
+    print(weird_sents)
+
+def generate_tree(dataset, num_entries = None):
+    import stanza
+    nlp = stanza.Pipeline(lang='en', processors='tokenize,pos,constituency')
+    from nltk.tree import Tree
+
+    text = [x[-2] for x in dataset[:num_entries]]
+
+    tree_list = [str(nlp(sent).sentences[0].constituency) for sent in text]
+    nltk_tree_list = [Tree.fromstring(x) for x in tree_list]
+
+    return list(zip((nltk_tree_list,text)))
+
+def recover_from_triu(matrices):
+
+    size_X = matrices[-1]
+    X = np.zeros((size_X,size_X))
+    full_matrices = []
+    for v in matrices[:-1]:
+        X[np.triu_indices(X.shape[0], k = 1)] = v
+        X = X + X.T
+        full_matrices.append(X)
+    return full_matrices
