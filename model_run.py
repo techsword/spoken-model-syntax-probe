@@ -67,20 +67,24 @@ def iter_layers(embeddings, y, lay, model, combination = False):
     scoring = []
     print(f"running model on layer {lay}")
     # just audio
-    audio_emb = [np.delete(x, [-2,-1]) for x in embeddings]
-    X = audio_emb
-    scoring += [[lay] + list(model_training(X, y, model)) + ['EMB']]
-    if combination:
-        # audio + audiolen
-        X = [np.delete(x, -1) for x in embeddings]
-        scoring += [[lay] + list(model_training(X, y, model)) + ['AL']]
-        # audio+wordcount
-        X = [np.delete(x, -2) for x in embeddings]
-        scoring += [[lay] + list(model_training(X, y, model)) + ['WC']]
-        # everything
-        X = [x for x in embeddings]
-        scoring += [[lay] + list(model_training(X, y, model)) + ['EMB+AL+WC']]
+    if len(embeddings[0]) == 770:
+        embeddings_ = [np.delete(x, [-2,-1]) for x in embeddings]
+        scoring += [[lay] + list(model_training(embeddings_, y, model)) + ['EMB']]
+        if combination:
+            # audio + audiolen
+            X = [np.delete(x, -1) for x in embeddings]
+            scoring += [[lay] + list(model_training(X, y, model)) + ['AL']]
+            # audio+wordcount
+            X = [np.delete(x, -2) for x in embeddings]
+            scoring += [[lay] + list(model_training(X, y, model)) + ['WC']]
+            # everything
+            X = [x for x in embeddings]
+            scoring += [[lay] + list(model_training(X, y, model)) + ['EMB+AL+WC']]
     
+    elif len(embeddings[0]) == 768:
+
+        scoring += [[lay] + list(model_training(embeddings, y, model)) + ['EMB']]
+
     return scoring
 
 
@@ -119,7 +123,8 @@ if __name__ == "__main__":
                         'fvgs'      : 'fast_vgs',
                         'fvgs+'     :'fast_vgs_plus',
                         'wav2vec'   : 'wav2vec_small',
-                        'wav2vec-random': 'wav2vec_random'}
+                        'wav2vec-random': 'wav2vec_random',
+                        'deberta': 'deberta'}
 
     corpora_names = {'libri': 'librispeech_train',
                     'scc'   : 'spokencoco_val'}
@@ -133,18 +138,20 @@ if __name__ == "__main__":
                     'scc-fast-vgs': os.path.join(path_to_extracted_embeddings, audio_model_names['fvgs']+'_'+corpora_names['scc'] +"_extracted.pt" ),
                     'libri-fast-vgs': os.path.join(path_to_extracted_embeddings, audio_model_names['fvgs']+'_'+corpora_names['libri'] +"_extracted.pt" ),
                     'scc-fast-vgs-plus': os.path.join(path_to_extracted_embeddings, audio_model_names['fvgs+']+'_'+corpora_names['scc'] +"_extracted.pt" ),
-                    'libri-fast-vgs-plus': os.path.join(path_to_extracted_embeddings, audio_model_names['fvgs+']+'_'+corpora_names['libri'] +"_extracted.pt" )
+                    'libri-fast-vgs-plus': os.path.join(path_to_extracted_embeddings, audio_model_names['fvgs+']+'_'+corpora_names['libri'] +"_extracted.pt" ),
+                    'libri-deberta': os.path.join(path_to_extracted_embeddings, audio_model_names['deberta']+'_'+corpora_names['libri'] +"_sentemb.pt"),
+                    'scc-deberta': os.path.join(path_to_extracted_embeddings, audio_model_names['deberta']+'_'+corpora_names['scc'] +"_sentemb.pt")
                     }
     dataset = dataset_dict[args.dataset]
-    audio_embeddings, labels, annot, wav = zip(*torch.load(dataset))
+    loaded_embeddings, labels, annot, wav = zip(*torch.load(dataset))
     BOW_array = make_bow(annot)
-    num_layers = len(audio_embeddings[0])
+    num_layers = len(loaded_embeddings[0])
     labels = np.array(labels[:args.num_data])
 
 
     if args.baseline == True:
         print(f'measuring baseline')
-        embeddings = [x[0] for x in audio_embeddings][:args.num_data]
+        embeddings = [x[0] for x in loaded_embeddings][:args.num_data]
         wordcount_ = [x[-1] for x in embeddings]
         audio_len_ = [x[-2] for x in embeddings]
         # baseline_score = baseline(embeddings,labels, load_model(args.modelname))
@@ -162,9 +169,12 @@ if __name__ == "__main__":
     
     elif args.model == True:
         for i in range(num_layers):
-            embeddings = [x[i] for x in audio_embeddings][:args.num_data]
+            embeddings = [x[i] for x in loaded_embeddings][:args.num_data]
             scoring = []
-            results = iter_layers(embeddings, labels, i, load_model(args.modelname), True)
+            if len(embeddings[0]) == 770:
+                results = iter_layers(embeddings, labels, i, load_model(args.modelname), True)
+            elif len(embeddings[0]) == 768:
+                results = iter_layers(embeddings, labels, i, load_model(args.modelname), False)
             scoring += results
             bigarray = np.concatenate((BOW_array, embeddings), axis=1)
             bow_results = iter_layers(bigarray, labels, i, load_model(args.modelname))

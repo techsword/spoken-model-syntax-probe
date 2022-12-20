@@ -97,6 +97,30 @@ def ridge_out_plot(ridge_out_file):
     mse_figure.save(os.path.join(save_path,'mse-'+figure_title+'.png'))
 
 
+def draw_rsa_figs(rsa_out_file, overwrite = False):
+    save_path = 'figs/rsa/'
+    save_file = os.path.join(save_path, os.path.basename(rsa_out_file)[:-4]+'.png')
+    if os.path.isfile(save_file) and overwrite:
+        print(f'{save_file} exists already! skipping plotting')
+    else:
+        df = pd.read_csv(rsa_out_file,names=['model','dataset','layer','alpha','pearsonr', 'p-value'])
+        df = df.sort_values(by=['alpha','model','dataset','layer'])
+        df.replace('\'','', regex=True, inplace=True) 
+        df.replace('\(*\)*','', regex=True, inplace=True) 
+        df.reset_index(drop=True)
+        df['alpha'] = df['alpha'].apply(pd.to_numeric)
+        df['p-value'] = df['p-value'].apply(pd.to_numeric)
+
+        plot = (p9.ggplot(df, p9.aes('layer', 'pearsonr', color='model', shape = 'dataset'))
+                + p9.geom_point() 
+                + p9.geom_line() 
+                + p9.theme_linedraw()
+                + p9.xlab('Model Transformer Layer')
+                + p9.ylab('Pearson Correlation')
+                + p9.ggtitle('Pearson correlation Score Chart for the different Models'))
+        # return plot   
+        plot.save(save_file)
+
 
 if __name__ == "__main__":
     for dataset in ['libri-train', 'scc-val']:
@@ -107,3 +131,4 @@ if __name__ == "__main__":
     for file in result_files:
         ridge_out_plot(file)
     
+    draw_rsa_figs('rsa.out')
