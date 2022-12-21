@@ -72,7 +72,7 @@ def make_AL_WC_plot(df_name, num_bin = 8):
 def ridge_out_plot(ridge_out_file, overwrite = False):
     results = pd.read_csv(ridge_out_file, header=None, names=['layer', 'r2score', 'mse', 'model_alpha', 'feature'])
     results.replace(r'\[*\]*\s*\'*','', regex=True, inplace=True) 
-
+    results['layer'] = results['layer'].astype('int')
     model_layer = max(results['layer'])
     save_path = 'figs/ridge'
     figure_title = os.path.basename(ridge_out_file)[:-4]
