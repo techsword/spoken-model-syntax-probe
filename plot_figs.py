@@ -120,27 +120,32 @@ def ridge_out_plot(ridge_out_file, overwrite = False):
 
 def draw_rsa_figs(rsa_out_file, overwrite = False):
     save_path = 'figs/rsa/'
-    save_file = os.path.join(save_path, os.path.basename(rsa_out_file)[:-4]+'.png')
-    if os.path.isfile(save_file) and not overwrite:
-        print(f'{save_file} exists already! skipping plotting')
-    else:
-        df = pd.read_csv(rsa_out_file,names=['model','dataset','layer','alpha','pearsonr', 'p-value'])
-        df = df.sort_values(by=['alpha','model','dataset','layer'])
-        df.replace('\'','', regex=True, inplace=True) 
-        df.replace('\(*\)*','', regex=True, inplace=True) 
-        df = df.reset_index(drop=True)
-        df['alpha'] = df['alpha'].apply(pd.to_numeric)
-        df['p-value'] = df['p-value'].apply(pd.to_numeric)
-        df = df.groupby(['model','dataset','layer'], as_index=False)['pearsonr'].mean()
-        plot = (p9.ggplot(df, p9.aes('layer', 'pearsonr', color='model', shape = 'dataset'))
-                + p9.geom_point() 
-                + p9.geom_line() 
-                + p9.theme_linedraw()
-                + p9.xlab('Model Transformer Layer')
-                + p9.ylab('Pearson Correlation')
-                + p9.ggtitle('Pearson correlation Score Chart for the different Models'))
-        # return plot   
-        plot.save(save_file)
+    dataset_lookup = {'libri':'librispeech_train','spoken':'spokencoco_val'}
+    for x in dataset_lookup:
+        save_file = os.path.join(save_path, os.path.basename(rsa_out_file)[:-4]+'_' + x +'.png')
+        if os.path.isfile(save_file) and not overwrite:
+            print(f'{save_file} exists already! skipping plotting')
+        else:
+            df = pd.read_csv(rsa_out_file,names=['model','dataset','layer','alpha','pearsonr', 'p-value'])
+            df = df.sort_values(by=['alpha','model','dataset','layer'])
+            df.replace(r'\'*\(*\)*\s*','', regex=True, inplace=True) 
+            # df.replace('\(*\)*','', regex=True, inplace=True) 
+            df = df.reset_index(drop=True)
+            df['alpha'] = df['alpha'].apply(pd.to_numeric)
+            df['p-value'] = df['p-value'].apply(pd.to_numeric)
+            
+            df = df[df['dataset'] == dataset_lookup[x]]
+            df = df.groupby(['model','layer'], as_index=False)['pearsonr'].mean()
+            plot = (p9.ggplot(df, p9.aes('layer', 'pearsonr', color='model'))#, shape = 'dataset'))
+                    + p9.geom_point() 
+                    + p9.geom_line() 
+                    + p9.theme_linedraw()
+                    + p9.scale_x_continuous(breaks = range(max(df['layer'])+1))
+                    + p9.xlab('Model Transformer Layer')
+                    + p9.ylab('Pearson Correlation')
+                    + p9.ggtitle('Pearson correlation Score Chart for the different Models'))
+            # return plot   
+            plot.save(save_file)
 
 
 if __name__ == "__main__":
@@ -153,4 +158,5 @@ if __name__ == "__main__":
         ridge_out_plot(file, overwrite=False)
     
     draw_rsa_figs('rsa.out')
-    draw_rsa_figs('rsa_delexed.out')
+    draw_rsa_figs('rsa_delexed.out', True)
+    

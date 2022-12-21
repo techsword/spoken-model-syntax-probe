@@ -10,14 +10,14 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 import ursa.util as U
 
 
-def audio_pairwise_distance_calc(dataset):
+def pairwise_distance_calc(dataset):
     pairwise_distance_container = []
     for layer in range(len(dataset[0][0])):
-        print('pulling audio embedding from layer', layer)
-        audio_emb = [x[0][layer][:-2] for x in dataset]
-        # layer_distance = pairwise_distances(audio_emb, metric='cosine', n_jobs=-1)
-        # layer_distance = U.pairwise(cosine,audio_emb, parallel=True)
-        tensor = torch.from_numpy(np.array(audio_emb).astype('float'))
+        print('pulling embedding from layer', layer)
+        embeddings = [x[0][layer][:-2] for x in dataset]
+        # layer_distance = pairwise_distances(embeddings, metric='cosine', n_jobs=-1)
+        # layer_distance = U.pairwise(cosine,embeddings, parallel=True)
+        tensor = torch.from_numpy(np.array(embeddings).astype('float'))
         layer_similarity_ = pairwise_cosine_similarity(tensor.to(device)).cpu()
         # layer_similarity[layer_similarity == 0] = 1
         # layer_similarity = U.triu(layer_similarity_).clone()
@@ -40,14 +40,14 @@ if __name__ == "__main__":
             print(f"{save_file} already exists! skipping for now")
 
         else:
-            print('calculating pairwise distance of audio emb from', i)
+            print('calculating pairwise distance of embeddings from', i)
             dataset = torch.load(dataset_lookup[i])
             if 'libri' in i:
                 dataset = [x for x in dataset if len(str.split(x[2])) < 52]
 
             elif 'spokencoco' in i:
                 dataset = [x for x in dataset if len(str.split(x[2])) < 20]
-            distance_calculated = audio_pairwise_distance_calc(dataset)
+            distance_calculated = pairwise_distance_calc(dataset)
 
             torch.save(distance_calculated, save_file)
 
