@@ -215,3 +215,7 @@ tree_kernel/scc_trees_0.5_42_delexed_kernel.pt
 tree_kernel/scc_trees_0.5_666_delexed_kernel.pt
 tree_kernel/scc_trees_0.5_2022_delexed_kernel.pt
 tree_kernel/scc_trees_0.5_2022_kernel.pt
+__pycache__/extract_sentence_embedding.cpython-39.pyc
+extracted_embeddings/deberta_librispeech_train_sentemb.pt
+extracted_embeddings/deberta_spokencoco_val_sentemb.pt
+logs/*
