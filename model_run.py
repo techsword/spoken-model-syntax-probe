@@ -67,7 +67,7 @@ def iter_layers(embeddings, y, lay, model, combination = False):
     scoring = []
     print(f"running model on layer {lay}")
     # just audio
-    if len(embeddings[0]) == 770:
+    if len(embeddings[0]) > 768:
         embeddings_ = [np.delete(x, [-2,-1]) for x in embeddings]
         scoring += [[lay] + list(model_training(embeddings_, y, model)) + ['EMB']]
         if combination:
