@@ -71,7 +71,8 @@ def make_AL_WC_plot(df_name, num_bin = 8):
 
 def ridge_out_plot(ridge_out_file, overwrite = False):
     results = pd.read_csv(ridge_out_file, header=None, names=['layer', 'r2score', 'mse', 'model_alpha', 'feature'])
-    results.replace('\[*\]*','', regex=True, inplace=True) 
+    results.replace(r'\[*\]*\s*\'*','', regex=True, inplace=True) 
+
     model_layer = max(results['layer'])
     save_path = 'figs/ridge'
     figure_title = os.path.basename(ridge_out_file)[:-4]
@@ -82,8 +83,10 @@ def ridge_out_plot(ridge_out_file, overwrite = False):
     elif 'scc' in ridge_out_file:
         baseline_file = os.path.join('ridge-results', [x for x in os.listdir('ridge-results') if 'baselines-scc' in x][0])
     baselines = pd.read_csv(baseline_file, header=None, names=['layer', 'r2score', 'mse', 'model_alpha', 'feature'])
-    baselines.replace('\[*\]*','', regex=True, inplace=True) 
+    baselines.replace(r'\[*\]*\s*\'*','', regex=True, inplace=True) 
     df = pd.concat([results,baselines])
+    df.loc[df['feature'] == 'AL', 'feature'] = 'EMB+AL'
+    df.loc[df['feature'] == 'WC', 'feature'] = 'EMB+WC'
     # return df
     
     df['layer'] = df['layer'].astype('int')
@@ -93,28 +96,26 @@ def ridge_out_plot(ridge_out_file, overwrite = False):
     df['model_alpha'] = pd.Categorical(df.model_alpha)
 
 
-    if not os.path.isfile(r2_figure_save) or overwrite:
-        r2_figure = (p9.ggplot(df,p9.aes('layer', 'r2score', color='feature'))
-                    + p9.geom_point() 
-                    + p9.geom_line() 
-                    + p9.theme_linedraw()
-                    + p9.xlab("Transformer Layer")
-                    + p9.ylab("R2score")
-                    + p9.ggtitle(figure_title + ' regression model score')
-                    + p9.scale_x_continuous(breaks = range(max(df['layer'])+1))
-        )
-        r2_figure.save(r2_figure_save)
-    elif not os.path.isfile(mse_figure_save) or overwrite:
-        mse_figure = (p9.ggplot(df,p9.aes('layer', 'mse', color='feature'))
-                    + p9.geom_point() 
-                    + p9.geom_line() 
-                    + p9.theme_linedraw()
-                    + p9.xlab("Transformer Layer")
-                    + p9.ylab("Mean Squared Error")
-                    + p9.ggtitle(figure_title + ' regression model score')
-                    + p9.scale_x_continuous(breaks = range(max(df['layer'])+1))
-        )
-        mse_figure.save(mse_figure_save)
+    r2_figure = (p9.ggplot(df,p9.aes('layer', 'r2score', color='feature'))
+                + p9.geom_point() 
+                + p9.geom_line() 
+                + p9.theme_linedraw()
+                + p9.xlab("Transformer Layer")
+                + p9.ylab("R2score")
+                + p9.ggtitle(figure_title + ' regression model score')
+                + p9.scale_x_continuous(breaks = range(max(df['layer'])+1))
+    )
+    r2_figure.save(r2_figure_save)
+    mse_figure = (p9.ggplot(df,p9.aes('layer', 'mse', color='feature'))
+                + p9.geom_point() 
+                + p9.geom_line() 
+                + p9.theme_linedraw()
+                + p9.xlab("Transformer Layer")
+                + p9.ylab("Mean Squared Error")
+                + p9.ggtitle(figure_title + ' regression model score')
+                + p9.scale_x_continuous(breaks = range(max(df['layer'])+1))
+    )
+    mse_figure.save(mse_figure_save)
 
 
 def draw_rsa_figs(rsa_out_file, overwrite = False):
@@ -149,6 +150,7 @@ if __name__ == "__main__":
     result_path = 'ridge-results/'
     result_files = [os.path.join(result_path,x) for x in os.listdir(result_path) if 'ridge' in x]
     for file in result_files:
-        ridge_out_plot(file, overwrite=True)
+        ridge_out_plot(file, overwrite=False)
     
     draw_rsa_figs('rsa.out')
+    draw_rsa_figs('rsa_delexed.out')
