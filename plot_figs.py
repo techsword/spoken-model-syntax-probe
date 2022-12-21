@@ -8,9 +8,10 @@ import seaborn as sns
 import torch
 import plotnine as p9
 
-df_dict = {'libri-train':'/home/gshen/work_dir/spoken-model-syntax-probe/extracted_embeddings/hubert_base_ls960_librispeech_train_extracted.pt','scc-val': '/home/gshen/work_dir/spoken-model-syntax-probe/extracted_embeddings/hubert_base_ls960_spokencoco_val_extracted.pt'}
+
 
 def make_AL_WC_plot(df_name, num_bin = 8):
+    df_dict = {'libri-train':'/home/gshen/work_dir/spoken-model-syntax-probe/extracted_embeddings/hubert_base_ls960_librispeech_train_extracted.pt','scc-val': '/home/gshen/work_dir/spoken-model-syntax-probe/extracted_embeddings/hubert_base_ls960_spokencoco_val_extracted.pt'}
     dataset = torch.load(df_dict[df_name])
     save_path = 'figs/meta/'
     datalist = []
@@ -67,50 +68,69 @@ def make_AL_WC_plot(df_name, num_bin = 8):
     # return wc_plot, al_plot, treedepth_al_plot, treedepth_wc_plot
 
 
-def ridge_out_plot(ridge_out_file):
-    df = pd.read_csv(ridge_out_file, header=None, names=['layer', 'r2score', 'mse', 'model_alpha', 'feature'])
+
+def ridge_out_plot(ridge_out_file, overwrite = False):
+    results = pd.read_csv(ridge_out_file, header=None, names=['layer', 'r2score', 'mse', 'model_alpha', 'feature'])
+    results.replace('\[*\]*','', regex=True, inplace=True) 
+    model_layer = max(results['layer'])
+    save_path = 'figs/ridge'
+    figure_title = os.path.basename(ridge_out_file)[:-4]
+    r2_figure_save = os.path.join(save_path,'r2score-'+figure_title+'.png')
+    mse_figure_save = os.path.join(save_path,'mse-'+figure_title+'.png')
+    if 'libri' in ridge_out_file:
+        baseline_file = os.path.join('ridge-results', [x for x in os.listdir('ridge-results') if 'baselines-libri' in x][0])
+    elif 'scc' in ridge_out_file:
+        baseline_file = os.path.join('ridge-results', [x for x in os.listdir('ridge-results') if 'baselines-scc' in x][0])
+    baselines = pd.read_csv(baseline_file, header=None, names=['layer', 'r2score', 'mse', 'model_alpha', 'feature'])
+    baselines.replace('\[*\]*','', regex=True, inplace=True) 
+    df = pd.concat([results,baselines])
+    # return df
+    
+    df['layer'] = df['layer'].astype('int')
+    df = df[df['layer'] <= int(model_layer)]
     df.sort_values(by=['feature'], inplace=True)
     df = df.reset_index(drop=True)
     df['model_alpha'] = pd.Categorical(df.model_alpha)
 
-    save_path = 'figs/ridge'
-    figure_title = os.path.basename(ridge_out_file)[:-4]
-    r2_figure = (p9.ggplot(df,p9.aes('layer', 'r2score', color='feature', shape = 'model_alpha'))
-                + p9.geom_point() 
-                + p9.geom_line() 
-                + p9.theme_linedraw()
-                + p9.xlab("Transformer Layer")
-                + p9.ylab("R2score")
-                + p9.ggtitle(figure_title + ' regression model score')
-                + p9.scale_x_continuous(breaks = range(max(df['layer'])+1))
-    )
-    r2_figure.save(os.path.join(save_path,'r2score-'+figure_title+'.png'))
-    mse_figure = (p9.ggplot(df,p9.aes('layer', 'mse', color='feature', shape = 'model_alpha'))
-                + p9.geom_point() 
-                + p9.geom_line() 
-                + p9.theme_linedraw()
-                + p9.xlab("Transformer Layer")
-                + p9.ylab("Mean Squared Error")
-                + p9.ggtitle(figure_title + ' regression model score')
-                + p9.scale_x_continuous(breaks = range(max(df['layer'])+1))
-    )
-    mse_figure.save(os.path.join(save_path,'mse-'+figure_title+'.png'))
+
+    if not os.path.isfile(r2_figure_save) or overwrite:
+        r2_figure = (p9.ggplot(df,p9.aes('layer', 'r2score', color='feature'))
+                    + p9.geom_point() 
+                    + p9.geom_line() 
+                    + p9.theme_linedraw()
+                    + p9.xlab("Transformer Layer")
+                    + p9.ylab("R2score")
+                    + p9.ggtitle(figure_title + ' regression model score')
+                    + p9.scale_x_continuous(breaks = range(max(df['layer'])+1))
+        )
+        r2_figure.save(r2_figure_save)
+    elif not os.path.isfile(mse_figure_save) or overwrite:
+        mse_figure = (p9.ggplot(df,p9.aes('layer', 'mse', color='feature'))
+                    + p9.geom_point() 
+                    + p9.geom_line() 
+                    + p9.theme_linedraw()
+                    + p9.xlab("Transformer Layer")
+                    + p9.ylab("Mean Squared Error")
+                    + p9.ggtitle(figure_title + ' regression model score')
+                    + p9.scale_x_continuous(breaks = range(max(df['layer'])+1))
+        )
+        mse_figure.save(mse_figure_save)
 
 
 def draw_rsa_figs(rsa_out_file, overwrite = False):
     save_path = 'figs/rsa/'
     save_file = os.path.join(save_path, os.path.basename(rsa_out_file)[:-4]+'.png')
-    if os.path.isfile(save_file) and overwrite:
+    if os.path.isfile(save_file) and not overwrite:
         print(f'{save_file} exists already! skipping plotting')
     else:
         df = pd.read_csv(rsa_out_file,names=['model','dataset','layer','alpha','pearsonr', 'p-value'])
         df = df.sort_values(by=['alpha','model','dataset','layer'])
         df.replace('\'','', regex=True, inplace=True) 
         df.replace('\(*\)*','', regex=True, inplace=True) 
-        df.reset_index(drop=True)
+        df = df.reset_index(drop=True)
         df['alpha'] = df['alpha'].apply(pd.to_numeric)
         df['p-value'] = df['p-value'].apply(pd.to_numeric)
-
+        df = df.groupby(['model','dataset','layer'], as_index=False)['pearsonr'].mean()
         plot = (p9.ggplot(df, p9.aes('layer', 'pearsonr', color='model', shape = 'dataset'))
                 + p9.geom_point() 
                 + p9.geom_line() 
@@ -123,12 +143,12 @@ def draw_rsa_figs(rsa_out_file, overwrite = False):
 
 
 if __name__ == "__main__":
-    for dataset in ['libri-train', 'scc-val']:
-        make_AL_WC_plot(dataset)
+    # for dataset in ['libri-train', 'scc-val']:
+    #     make_AL_WC_plot(dataset)
 
     result_path = 'ridge-results/'
     result_files = [os.path.join(result_path,x) for x in os.listdir(result_path) if 'ridge' in x]
     for file in result_files:
-        ridge_out_plot(file)
+        ridge_out_plot(file, overwrite=True)
     
     draw_rsa_figs('rsa.out')
