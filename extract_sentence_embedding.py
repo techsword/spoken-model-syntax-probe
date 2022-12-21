@@ -75,6 +75,6 @@ if __name__ == "__main__":
                 tree_depths = [x[1:] for x in torch.load('/home/gshen/work_dir/spoken-model-syntax-probe/extracted_embeddings/wav2vec_small_librispeech_train_extracted.pt')]
             elif 'spokencoco' in x:
                 tree_depths = [x[1:] for x in torch.load('/home/gshen/work_dir/spoken-model-syntax-probe/extracted_embeddings/wav2vec_small_spokencoco_val_extracted.pt')]
-            sent_embedding = [list(i[0])+list(j) for i,j in zip(extracted_embeddings, tree_depths) if i[1] == j[1]]
+            sent_embedding = [list(j).insert(0, list(i[0])) for i,j in zip(extracted_embeddings, tree_depths) if i[1] == j[1]]
             torch.save(sent_embedding, save_file)
 
