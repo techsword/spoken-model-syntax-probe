@@ -90,6 +90,7 @@ def ridge_out_plot(ridge_out_file, overwrite = False):
     # return df
     
     df['layer'] = df['layer'].astype('int')
+    df['layer'] += 1
     df = df[df['layer'] <= int(model_layer)]
     df.sort_values(by=['feature'], inplace=True)
     df = df.reset_index(drop=True)
@@ -155,8 +156,8 @@ if __name__ == "__main__":
     result_path = 'ridge-results/'
     result_files = [os.path.join(result_path,x) for x in os.listdir(result_path) if 'ridge' in x]
     for file in result_files:
-        ridge_out_plot(file, overwrite=False)
+        ridge_out_plot(file, overwrite=True)
     
-    draw_rsa_figs('rsa.out')
-    draw_rsa_figs('rsa_delexed.out', True)
+    # draw_rsa_figs('rsa.out')
+    # draw_rsa_figs('rsa_delexed.out', True)
     
