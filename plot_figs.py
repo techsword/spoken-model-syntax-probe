@@ -73,6 +73,7 @@ def ridge_out_plot(ridge_out_file, overwrite = False):
     results = pd.read_csv(ridge_out_file, header=None, names=['layer', 'r2score', 'mse', 'model_alpha', 'feature'])
     results.replace(r'\[*\]*\s*\'*','', regex=True, inplace=True) 
     results['layer'] = results['layer'].astype('int')
+    results['layer'] += 1
     model_layer = max(results['layer'])
     save_path = 'figs/ridge'
     figure_title = os.path.basename(ridge_out_file)[:-4]
@@ -84,13 +85,14 @@ def ridge_out_plot(ridge_out_file, overwrite = False):
         baseline_file = os.path.join('ridge-results', [x for x in os.listdir('ridge-results') if 'baselines-scc' in x][0])
     baselines = pd.read_csv(baseline_file, header=None, names=['layer', 'r2score', 'mse', 'model_alpha', 'feature'])
     baselines.replace(r'\[*\]*\s*\'*','', regex=True, inplace=True) 
+    baselines['layer'] += 1
     df = pd.concat([results,baselines])
     df.loc[df['feature'] == 'AL', 'feature'] = 'EMB+AL'
     df.loc[df['feature'] == 'WC', 'feature'] = 'EMB+WC'
     # return df
     
     df['layer'] = df['layer'].astype('int')
-    df['layer'] += 1
+
     df = df[df['layer'] <= int(model_layer)]
     df.sort_values(by=['feature'], inplace=True)
     df = df.reset_index(drop=True)
@@ -130,11 +132,9 @@ def draw_rsa_figs(rsa_out_file, overwrite = False):
             df = pd.read_csv(rsa_out_file,names=['model','dataset','layer','alpha','pearsonr', 'p-value'])
             df = df.sort_values(by=['alpha','model','dataset','layer'])
             df.replace(r'\'*\(*\)*\s*','', regex=True, inplace=True) 
-            # df.replace('\(*\)*','', regex=True, inplace=True) 
             df = df.reset_index(drop=True)
-            df['alpha'] = df['alpha'].apply(pd.to_numeric)
-            df['p-value'] = df['p-value'].apply(pd.to_numeric)
-            
+            df[['alpha', 'p-value', 'layer', 'pearsonr']] = df[['alpha', 'p-value', 'layer', 'pearsonr']].apply(pd.to_numeric)
+            df = df.groupby(['model','dataset','layer'], as_index=False)['pearsonr'].median()
             df = df[df['dataset'] == dataset_lookup[x]]
             df = df.groupby(['model','layer'], as_index=False)['pearsonr'].mean()
             plot = (p9.ggplot(df, p9.aes('layer', 'pearsonr', color='model'))#, shape = 'dataset'))
