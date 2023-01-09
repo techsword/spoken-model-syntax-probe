@@ -74,7 +74,7 @@ def fast_vgs_feat_gen(dataset, model, limit = None):
             # feat_list.append(torch.mean(features,dim=1).squeeze().numpy())
             feat_list.append(features)
 
-    print(f"there are {len(lab_list)} in the extracted dataset, each tensor is {features[0].shape}, the max tree depth is {max(lab_list)} and the min is {min(lab_list)}")
+    print(f"there are {len(lab_list)} in the extracted dataset, the total number of layers is {len(feat_list)}, each tensor is {features[0].shape}, the max tree depth is {max(lab_list)} and the min is {min(lab_list)}")
     return list(zip(feat_list, lab_list,annot_list,wav_path_list))
 
 if __name__ == '__main__':    
@@ -87,7 +87,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--model',
                     type=str, default = 'hubert', metavar='model',
-                    help="choose the model used to extract embeddings, default is hubert. options: hubert, wav2vec, random, fast-vgs, fast-vgs-plus"
+                    help="choose the model used to extract embeddings, default is hubert. options: hubert, wav2vec, random, fast-vgs, fast-vgs-plus, asr"
     )
     parser.add_argument('--corpus',
                     type=str, default = 'spokencoco', metavar='corpus',
@@ -96,11 +96,14 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if 'fast-vgs' not in args.model:
-        if args.model != 'random':
-            model_file = model_dict[args.model]
-            saved_file = os.path.basename(model_file[:-3]) + '_' + args.corpus + '_extracted' + '.pt'
-            from utils.custom_functions import loading_fairseq_model
-            model = loading_fairseq_model(model_file)
+        if args.model == 'asr':
+            from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor, Wav2Vec2Model
+            MODEL_ID = "jonatasgrosman/wav2vec2-large-english"
+            # processor = Wav2Vec2Processor.from_pretrained(MODEL_ID)
+            hf_model = Wav2Vec2Model.from_pretrained(MODEL_ID)
+            saved_file = 'wav2vec_large_en_' + args.corpus + '_extracted.pt'
+            from utils.custom_functions import loading_huggingface_model
+            model = loading_huggingface_model(hf_model)
 
         elif args.model == 'random':
             from transformers import Wav2Vec2Config, Wav2Vec2Model
@@ -114,6 +117,12 @@ if __name__ == '__main__':
             saved_file = 'wav2vec_random_' + args.corpus + '_extracted.pt'
             from utils.custom_functions import loading_huggingface_model
             model = loading_huggingface_model(hf_model)
+
+        else: #args.model != 'random' or 'asr':
+            model_file = model_dict[args.model]
+            saved_file = os.path.basename(model_file[:-3]) + '_' + args.corpus + '_extracted' + '.pt'
+            from utils.custom_functions import loading_fairseq_model
+            model = loading_fairseq_model(model_file)
 
         if args.corpus == 'spokencoco':
             # extract embeddings with the model defined above from spokencoco corpus
